@@ -34,6 +34,7 @@ pub fn full_pipeline_test() {
       Some(types.Open),
       Some(types.P1),
       ["cook", "cache"],
+      "",
     )
 
   // 2. Read and embed it

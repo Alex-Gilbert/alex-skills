@@ -3,6 +3,7 @@ import alex_memory/indexer/embedder
 import alex_memory/indexer/vault_watcher
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
+import alex_memory/mcp/http_server
 import alex_memory/mcp/server as mcp_server
 import gleam/erlang/process
 import gleam/io
@@ -17,14 +18,34 @@ pub fn main() {
   // Start embedder immediately (it can queue messages before infra is ready)
   let assert Ok(embedder_subject) = embedder.start(cfg)
 
-  // Start infrastructure setup in a background process so MCP server
-  // can begin the handshake immediately. Tool calls that need Qdrant/Ollama
-  // will work once setup completes.
+  // Build the MCP server (shared by both transports)
+  let server = mcp_server.build(cfg, embedder_subject)
+
+  // Start infrastructure setup in a background process
   let _ = process.spawn(fn() { setup_infrastructure(cfg, embedder_subject) })
 
-  // Start MCP server on stdio immediately (blocks until stdin closes)
+  // Start HTTP server if enabled (non-blocking — Mist runs in background)
+  case cfg.mcp.http_enabled {
+    True -> {
+      let _ = http_server.start(cfg, server)
+      Nil
+    }
+    False -> Nil
+  }
+
+  // Start stdio transport (blocks until stdin closes)
   io.println_error("MCP server ready")
-  mcp_server.start(cfg, embedder_subject)
+  mcp_server.run_stdio(server)
+
+  // If HTTP is enabled, keep the BEAM alive after stdio closes
+  // so remote clients aren't dropped when the local plugin disconnects.
+  case cfg.mcp.http_enabled {
+    True -> {
+      io.println_error("Stdio closed, HTTP server still running. Ctrl+C to stop.")
+      process.sleep_forever()
+    }
+    False -> Nil
+  }
 }
 
 fn setup_infrastructure(

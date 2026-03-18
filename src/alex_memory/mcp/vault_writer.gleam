@@ -23,6 +23,7 @@ pub fn write_memory(
   status: Option(types.Status),
   severity: Option(types.Severity),
   tags: List(String),
+  author: String,
 ) -> Result(String, String) {
   let today = get_today()
   let type_dir = types.memory_type_to_dir(memory_type)
@@ -48,6 +49,7 @@ pub fn write_memory(
       source: types.Conversation,
       vault_path: relative_path,
       schema_version: 1,
+      author: author,
     )
 
   let file_content = frontmatter.serialize(meta, title, content)
@@ -98,6 +100,7 @@ pub fn update_memory(
               source: doc.metadata.source,
               vault_path: doc.metadata.vault_path,
               schema_version: doc.metadata.schema_version,
+              author: doc.metadata.author,
             )
           let file_content =
             frontmatter.serialize(updated_meta, doc.title, new_content)

@@ -216,6 +216,7 @@ pub fn build_payload(
     #("source", json.string(types.source_to_string(doc.metadata.source))),
     #("schema_version", json.int(doc.metadata.schema_version)),
     #("tags", json.array(doc.metadata.tags, json.string)),
+    #("author", json.string(doc.metadata.author)),
   ]
 
   let fields_with_status = case doc.metadata.status {

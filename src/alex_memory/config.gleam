@@ -20,7 +20,12 @@ pub type IndexerConfig {
 }
 
 pub type McpConfig {
-  McpConfig(transport: String)
+  McpConfig(
+    transport: String,
+    http_port: Int,
+    http_enabled: Bool,
+    default_author: String,
+  )
 }
 
 pub type Config {
@@ -90,6 +95,18 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
         |> result.map_error(fn(_) { "Missing mcp.transport" }),
       )
 
+      let mcp_http_port =
+        tom.get_int(doc, ["mcp", "http_port"])
+        |> result.unwrap(7890)
+
+      let mcp_http_enabled =
+        tom.get_bool(doc, ["mcp", "http_enabled"])
+        |> result.unwrap(False)
+
+      let mcp_default_author =
+        tom.get_string(doc, ["mcp", "default_author"])
+        |> result.unwrap("")
+
       Ok(Config(
         vault: VaultConfig(
           path: vault_path,
@@ -106,7 +123,12 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
           debounce_ms: indexer_debounce_ms,
           chunk_max_tokens: indexer_chunk_max_tokens,
         ),
-        mcp: McpConfig(transport: mcp_transport),
+        mcp: McpConfig(
+          transport: mcp_transport,
+          http_port: mcp_http_port,
+          http_enabled: mcp_http_enabled,
+          default_author: mcp_default_author,
+        ),
       ))
     }
   }

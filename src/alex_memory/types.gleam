@@ -47,6 +47,7 @@ pub type Metadata {
     source: Source,
     vault_path: String,
     schema_version: Int,
+    author: String,
   )
 }
 

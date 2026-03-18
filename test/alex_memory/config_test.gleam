@@ -23,6 +23,9 @@ chunk_max_tokens = 512
 
 [mcp]
 transport = \"stdio\"
+http_port = 7890
+http_enabled = true
+default_author = \"alex\"
 "
 
   let cfg = config.parse(toml)
@@ -39,6 +42,9 @@ transport = \"stdio\"
   c.indexer.debounce_ms |> should.equal(500)
   c.indexer.chunk_max_tokens |> should.equal(512)
   c.mcp.transport |> should.equal("stdio")
+  c.mcp.http_port |> should.equal(7890)
+  c.mcp.http_enabled |> should.equal(True)
+  c.mcp.default_author |> should.equal("alex")
 }
 
 pub fn load_from_file_test() {

@@ -36,6 +36,7 @@ pub fn parse(content: String) -> Result(MemoryDocument, String) {
           source: Vault,
           vault_path: "",
           schema_version: 1,
+          author: "",
         )
       Ok(MemoryDocument(title: title, content: body, metadata: meta))
     }
@@ -63,6 +64,10 @@ pub fn serialize(meta: Metadata, title: String, content: String) -> String {
       list.append(lines, [
         "tags: [" <> string.join(tags, ", ") <> "]",
       ])
+  }
+  let lines = case meta.author {
+    "" -> lines
+    a -> list.append(lines, ["author: " <> a])
   }
   let lines =
     list.append(lines, [
@@ -168,6 +173,8 @@ fn build_metadata(
     None -> Ok(types.Vault)
   })
 
+  let author = find_key(kv, "author") |> option.unwrap("")
+
   Ok(Metadata(
     memory_type: memory_type,
     status: status,
@@ -178,6 +185,7 @@ fn build_metadata(
     source: source,
     vault_path: "",
     schema_version: 1,
+    author: author,
   ))
 }
 

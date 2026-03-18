@@ -1,4 +1,5 @@
 import alex_memory/types
+import gleam/option.{None}
 import gleeunit/should
 
 pub fn memory_type_to_string_test() {
@@ -17,4 +18,21 @@ pub fn memory_type_from_string_test() {
 pub fn status_to_string_test() {
   types.status_to_string(types.Open) |> should.equal("open")
   types.status_to_string(types.Resolved) |> should.equal("resolved")
+}
+
+pub fn metadata_has_author_field_test() {
+  let meta =
+    types.Metadata(
+      memory_type: types.Memory,
+      status: None,
+      severity: None,
+      tags: [],
+      created: "",
+      updated: "",
+      source: types.Conversation,
+      vault_path: "",
+      schema_version: 1,
+      author: "alex",
+    )
+  meta.author |> should.equal("alex")
 }

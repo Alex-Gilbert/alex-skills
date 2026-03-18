@@ -55,6 +55,14 @@ pub fn parse_no_frontmatter_test() {
   result |> should.be_ok
 }
 
+pub fn parse_author_frontmatter_test() {
+  let input =
+    "---\ntype: bug\nstatus: open\nauthor: alex@example.com\ncreated: 2026-03-18\nupdated: 2026-03-18\nsource: conversation\n---\n\n# Test Bug\n\nSome content"
+  let assert Ok(doc) = frontmatter.parse(input)
+  doc.metadata.author
+  |> should.equal("alex@example.com")
+}
+
 pub fn serialize_frontmatter_test() {
   let meta =
     types.Metadata(
@@ -67,9 +75,28 @@ pub fn serialize_frontmatter_test() {
       source: types.Conversation,
       vault_path: "Claude/bugs/test.md",
       schema_version: 1,
+      author: "",
     )
   let output = frontmatter.serialize(meta, "Test Bug", "Some content")
   string.contains(output, "type: bug") |> should.be_true
   string.contains(output, "status: open") |> should.be_true
   string.contains(output, "# Test Bug") |> should.be_true
+}
+
+pub fn serialize_author_frontmatter_test() {
+  let meta =
+    types.Metadata(
+      memory_type: types.Bug,
+      status: option.Some(types.Open),
+      severity: option.None,
+      tags: [],
+      created: "2026-03-18",
+      updated: "2026-03-18",
+      source: types.Conversation,
+      vault_path: "",
+      schema_version: 1,
+      author: "alex@example.com",
+    )
+  let result = frontmatter.serialize(meta, "Test Bug", "Content")
+  result |> string.contains("author: alex@example.com") |> should.be_true
 }
