@@ -74,12 +74,14 @@ created: 2026-03-18
 main():
   config.load()
   embedder.start()
+  server = build(config, embedder)
   spawn(setup_infrastructure())
-  spawn(run_stdio(server))      # was blocking, now spawned
-  run_http(server, config)      # blocks on Mist accept loop (if http_enabled)
+  http_server.start(server)     # non-blocking — Mist spawns OTP supervisor
+  run_stdio(server)             # blocks until stdin closes
+  sleep_forever() if http_enabled  # keep BEAM alive for remote clients
 ```
 
-Both loops run concurrently as separate OTP processes. If `http_enabled = false`, skip `run_http` and block on stdio as before (backwards compatible).
+Mist's `start` is non-blocking (spawns an OTP supervisor and returns), while stdio must block to keep the process alive. After stdio closes, if HTTP is enabled the process stays alive so remote clients aren't dropped. If `http_enabled = false`, behavior is identical to before (backwards compatible).
 
 ### Remote Client Setup
 
