@@ -7,14 +7,12 @@ import alex_memory/types
 import gleam/dynamic/decode
 import gleam/erlang/process.{type Subject}
 import gleam/float
-import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import mcp_toolkit
 import mcp_toolkit/core/protocol as mcp
-import mcp_toolkit/transport/stdio
 
 // ---------- Argument types ----------
 
@@ -668,25 +666,3 @@ pub fn build(
   |> mcp_toolkit.build()
 }
 
-/// Start the stdio transport. Blocks until stdin closes.
-pub fn run_stdio(server: mcp_toolkit.Server) -> Nil {
-  io.println_error("MCP server ready, listening on stdio...")
-  do_run_stdio(server)
-}
-
-fn do_run_stdio(server: mcp_toolkit.Server) -> Nil {
-  case stdio.read_message() {
-    Ok(message) -> {
-      case mcp_toolkit.handle_message(server, message) {
-        Ok(Some(response)) -> io.println(json.to_string(response))
-        Ok(None) -> Nil
-        Error(err) -> io.println(json.to_string(err))
-      }
-      do_run_stdio(server)
-    }
-    Error(_) -> {
-      io.println_error("MCP server: stdin closed, shutting down")
-      Nil
-    }
-  }
-}

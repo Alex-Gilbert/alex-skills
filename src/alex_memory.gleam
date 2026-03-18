@@ -18,7 +18,7 @@ pub fn main() {
   // Start embedder immediately (it can queue messages before infra is ready)
   let assert Ok(embedder_subject) = embedder.start(cfg)
 
-  // Build the MCP server (shared by both transports)
+  // Build the MCP server
   let server = mcp_server.build(cfg, embedder_subject)
 
   // Start infrastructure setup in a background process
