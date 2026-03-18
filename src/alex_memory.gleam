@@ -5,7 +5,6 @@ import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
 import alex_memory/mcp/dashboard_writer
 import alex_memory/mcp/http_server
-import alex_memory/mcp/server as mcp_server
 import gleam/erlang/process
 import gleam/io
 
@@ -19,15 +18,12 @@ pub fn main() {
   // Start embedder immediately (it can queue messages before infra is ready)
   let assert Ok(embedder_subject) = embedder.start(cfg)
 
-  // Build the MCP server
-  let server = mcp_server.build(cfg, embedder_subject)
-
   // Start infrastructure setup in a background process
   let _ = process.spawn(fn() { setup_infrastructure(cfg, embedder_subject) })
 
   // Start HTTP server (fatal on failure — e.g. port conflict)
-  let assert Ok(_) = http_server.start(cfg, server)
-  io.println_error("MCP server ready")
+  let assert Ok(_) = http_server.start(cfg, embedder_subject)
+  io.println_error("REST API server ready")
 
   // Keep BEAM alive for HTTP clients
   process.sleep_forever()
