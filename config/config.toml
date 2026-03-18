@@ -16,6 +16,6 @@ vector_dimension = 1024
 debounce_ms = 500
 chunk_max_tokens = 512
 
-[mcp]
-http_port = 7890
+[http]
+port = 7890
 default_author = "alex"

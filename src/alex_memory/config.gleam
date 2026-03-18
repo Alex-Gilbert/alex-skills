@@ -19,9 +19,9 @@ pub type IndexerConfig {
   IndexerConfig(debounce_ms: Int, chunk_max_tokens: Int)
 }
 
-pub type McpConfig {
-  McpConfig(
-    http_port: Int,
+pub type HttpConfig {
+  HttpConfig(
+    port: Int,
     default_author: String,
   )
 }
@@ -32,7 +32,7 @@ pub type Config {
     ollama: OllamaConfig,
     qdrant: QdrantConfig,
     indexer: IndexerConfig,
-    mcp: McpConfig,
+    http: HttpConfig,
   )
 }
 
@@ -88,12 +88,12 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
         |> result.map_error(fn(_) { "Missing indexer.chunk_max_tokens" }),
       )
 
-      let mcp_http_port =
-        tom.get_int(doc, ["mcp", "http_port"])
+      let http_port =
+        tom.get_int(doc, ["http", "port"])
         |> result.unwrap(7890)
 
-      let mcp_default_author =
-        tom.get_string(doc, ["mcp", "default_author"])
+      let http_default_author =
+        tom.get_string(doc, ["http", "default_author"])
         |> result.unwrap("")
 
       Ok(Config(
@@ -112,9 +112,9 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
           debounce_ms: indexer_debounce_ms,
           chunk_max_tokens: indexer_chunk_max_tokens,
         ),
-        mcp: McpConfig(
-          http_port: mcp_http_port,
-          default_author: mcp_default_author,
+        http: HttpConfig(
+          port: http_port,
+          default_author: http_default_author,
         ),
       ))
     }

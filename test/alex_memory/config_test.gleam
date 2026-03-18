@@ -21,8 +21,8 @@ vector_dimension = 1024
 debounce_ms = 500
 chunk_max_tokens = 512
 
-[mcp]
-http_port = 7890
+[http]
+port = 7890
 default_author = \"alex\"
 "
 
@@ -39,8 +39,8 @@ default_author = \"alex\"
   c.qdrant.vector_dimension |> should.equal(1024)
   c.indexer.debounce_ms |> should.equal(500)
   c.indexer.chunk_max_tokens |> should.equal(512)
-  c.mcp.http_port |> should.equal(7890)
-  c.mcp.default_author |> should.equal("alex")
+  c.http.port |> should.equal(7890)
+  c.http.default_author |> should.equal("alex")
 }
 
 pub fn load_from_file_test() {

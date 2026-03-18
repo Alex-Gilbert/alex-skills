@@ -19,7 +19,7 @@ pub fn start(
   server: mcp_toolkit.Server,
 ) -> Result(Nil, String) {
   let registry = sse.start_registry()
-  let default_author = config.mcp.default_author
+  let default_author = config.http.default_author
 
   let handler = fn(req: request.Request(mist.Connection)) {
     // Extract author from ?author= query param, fall back to config default
@@ -39,7 +39,7 @@ pub fn start(
     }
   }
 
-  let port = config.mcp.http_port
+  let port = config.http.port
   io.println_error(
     "HTTP MCP server starting on port " <> string.inspect(port) <> "...",
   )

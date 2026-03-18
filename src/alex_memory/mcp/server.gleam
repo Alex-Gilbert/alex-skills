@@ -277,7 +277,7 @@ fn handle_store(
             // Get author from request context, fall back to config default
             let request_author =
               author.get()
-              |> result.unwrap(config.mcp.default_author)
+              |> result.unwrap(config.http.default_author)
 
             // Write to vault
             case
