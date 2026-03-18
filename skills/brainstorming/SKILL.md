@@ -104,6 +104,10 @@ digraph brainstorming {
     -d '{"query": "IDEA_QUERY", "type": "idea"}' \
     $MEMORY_API_URL/memories/search
   ```
+  To read the full content of a result, use the path from search results:
+  ```bash
+  curl -s $MEMORY_API_URL/memories/<path>
+  ```
   Display the idea (and its shaped version if status is `active`) so both parties start aligned.
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.

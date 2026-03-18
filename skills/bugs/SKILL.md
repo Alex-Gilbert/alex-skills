@@ -31,8 +31,12 @@ curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      -d '{"query": "QUERY", "type": "bug", "status": "open"}' \
      $MEMORY_API_URL/memories/search
    ```
-2. Present the top match and confirm with the user
-3. Update status to resolved:
+2. To see full details of a bug, read it using the path from search results:
+   ```bash
+   curl -s $MEMORY_API_URL/memories/<path>
+   ```
+3. Present the top match and confirm with the user
+4. Update status to resolved:
    ```bash
    curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      -X PATCH \

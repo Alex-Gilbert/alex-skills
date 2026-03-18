@@ -24,7 +24,11 @@ Challenge and refine an idea into something actionable through focused questioni
 
 ## Flow
 
-1. **Load the idea** — from vault or fresh input. Display it back to the user so you're both starting from the same place.
+1. **Load the idea** — from vault or fresh input. Use the path from search results to read the full content:
+   ```bash
+   curl -s $MEMORY_API_URL/memories/<path>
+   ```
+   Display it back to the user so you're both starting from the same place.
 2. **Offer visual companion** (this is its own message, no other content):
    > "Some of what we're working on might be easier to explain if I can show it to you in a web browser. I can put together mockups, diagrams, comparisons, and other visuals as we go. This feature is still new and can be token-intensive. Want to try it? (Requires opening a local URL)"
    If accepted, read the guide at `skills/brainstorming/visual-companion.md` before proceeding. If declined, text-only shaping. Per-question, decide visual vs. terminal: "would the user understand this better by seeing it than reading it?"

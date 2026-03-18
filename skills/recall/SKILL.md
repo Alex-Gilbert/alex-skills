@@ -31,4 +31,8 @@ Format each result as:
 - **Path**: vault path (for opening in Obsidian)
 - **Preview**: first 200 chars of content
 
-If the user wants more detail on a specific result, read the full vault file.
+If the user wants more detail on a specific result, fetch the full content using the path from the search result:
+```bash
+curl -s $MEMORY_API_URL/memories/<path>
+```
+For example: `curl -s $MEMORY_API_URL/memories/Claude/decisions/some-decision.md`
