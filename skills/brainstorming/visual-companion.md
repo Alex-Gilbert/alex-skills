@@ -88,9 +88,9 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 5. **Store diagrams to memory** — when a diagram, architecture visual, or mockup is finalized (user approves and you're moving on), call `memory_store` with:
    - `memory_type`: `brainstorm`
    - `title`: descriptive name (e.g., "Architecture Diagram — Auth Flow")
-   - `content`: a text description of what the diagram shows, the key decisions it captures, and the file path where the HTML lives (e.g., `Project: .superpowers/brainstorm/<session>/auth-flow.html`)
+   - `content`: a text description of what the diagram shows — components, relationships, data flow, and the key decisions it captures. Include enough detail that someone could reconstruct the diagram from the description alone.
    - `tags`: relevant project/topic tags
-   This ensures diagrams are searchable in future conversations even if the visual files are lost.
+   This ensures diagrams are searchable and reproducible in future conversations.
 
 6. **Unload when returning to terminal** — when the next step doesn't need the browser (e.g., a clarifying question, a tradeoff discussion), push a waiting screen to clear the stale content:
 
