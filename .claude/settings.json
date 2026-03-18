@@ -1,0 +1,6 @@
+{
+  "env": {
+    "MEMORY_API_URL": "http://archbtw:7890",
+    "MEMORY_API_AUTHOR": "alex"
+  }
+}
