@@ -1,7 +1,7 @@
 [vault]
 path = "/home/alex/alex-vault"
 claude_dir = "Claude"
-ignore = [".obsidian", ".git", ".trash"]
+ignore = [".obsidian", ".git", ".trash", "_dashboards"]
 
 [ollama]
 url = "http://localhost:11434"

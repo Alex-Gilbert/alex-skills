@@ -3,6 +3,7 @@ import alex_memory/indexer/embedder
 import alex_memory/indexer/vault_watcher
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
+import alex_memory/mcp/dashboard_writer
 import alex_memory/mcp/http_server
 import alex_memory/mcp/server as mcp_server
 import gleam/erlang/process
@@ -73,6 +74,12 @@ fn setup_infrastructure(
   // Initial index
   io.println_error("Starting initial vault index...")
   process.send(embedder_subject, embedder.ReindexAll)
+
+  // Generate Obsidian Bases dashboards
+  case dashboard_writer.regenerate(cfg.vault.path, cfg.vault.claude_dir) {
+    Ok(_) -> io.println_error("Dashboards generated")
+    Error(e) -> io.println_error("WARNING: Dashboard generation failed: " <> e)
+  }
 
   io.println_error("Infrastructure setup complete")
   Nil

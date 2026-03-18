@@ -3,6 +3,7 @@ import alex_memory/indexer/embedder
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
 import alex_memory/mcp/author
+import alex_memory/mcp/dashboard_writer
 import alex_memory/mcp/vault_writer
 import alex_memory/types
 import gleam/dynamic/decode
@@ -302,6 +303,16 @@ fn handle_store(
                     vault_relative: vault_path,
                   ),
                 )
+                // Regenerate dashboards in background
+                let _ =
+                  process.spawn_unlinked(fn() {
+                    let _ =
+                      dashboard_writer.regenerate(
+                        config.vault.path,
+                        config.vault.claude_dir,
+                      )
+                    Nil
+                  })
                 text_result(
                   "Memory stored at: "
                   <> vault_path,
@@ -530,11 +541,22 @@ fn handle_update(
             args.content,
           )
         {
-          Ok(Nil) ->
+          Ok(Nil) -> {
+            // Regenerate dashboards in background
+            let _ =
+              process.spawn_unlinked(fn() {
+                let _ =
+                  dashboard_writer.regenerate(
+                    config.vault.path,
+                    config.vault.claude_dir,
+                  )
+                Nil
+              })
             text_result(
               "Memory updated: " <> args.vault_path
               <> "\nThe vault watcher will automatically re-index the updated file.",
             )
+          }
           Error(e) -> error_result("Failed to update memory: " <> e)
         }
       }
