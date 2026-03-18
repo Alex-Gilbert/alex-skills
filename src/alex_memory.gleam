@@ -10,46 +10,65 @@ import gleam/io
 pub fn main() {
   io.println_error("Starting alex_memory...")
 
-  // Load config
+  // Load config (fast, local file read)
   let assert Ok(cfg) = config.load("config/config.toml")
-  io.println_error("Config loaded from config/config.toml")
+  io.println_error("Config loaded")
 
+  // Start embedder immediately (it can queue messages before infra is ready)
+  let assert Ok(embedder_subject) = embedder.start(cfg)
+
+  // Start infrastructure setup in a background process so MCP server
+  // can begin the handshake immediately. Tool calls that need Qdrant/Ollama
+  // will work once setup completes.
+  let _ = process.spawn(fn() { setup_infrastructure(cfg, embedder_subject) })
+
+  // Start MCP server on stdio immediately (blocks until stdin closes)
+  io.println_error("MCP server ready")
+  mcp_server.start(cfg, embedder_subject)
+}
+
+fn setup_infrastructure(
+  cfg: config.Config,
+  embedder_subject: process.Subject(embedder.Message),
+) -> Nil {
   // Ensure Qdrant collection exists
-  let assert Ok(_) =
+  case
     qdrant_client.ensure_collection(
       cfg.qdrant.url,
       cfg.qdrant.collection,
       cfg.qdrant.vector_dimension,
     )
-  io.println_error("Qdrant collection ready: " <> cfg.qdrant.collection)
-
-  // Ensure Ollama model is available
-  let assert Ok(exists) =
-    ollama_client.model_exists(cfg.ollama.url, cfg.ollama.model)
-  case exists {
-    True -> io.println_error("Ollama model ready: " <> cfg.ollama.model)
-    False -> {
-      io.println_error("Pulling Ollama model: " <> cfg.ollama.model)
-      let assert Ok(_) =
-        ollama_client.pull_model(cfg.ollama.url, cfg.ollama.model)
-      io.println_error("Model pulled successfully")
-    }
+  {
+    Ok(_) ->
+      io.println_error("Qdrant collection ready: " <> cfg.qdrant.collection)
+    Error(_) -> io.println_error("WARNING: Qdrant not available")
   }
 
-  // Start embedder
-  let assert Ok(embedder_subject) = embedder.start(cfg)
-  io.println_error("Embedder started")
+  // Ensure Ollama model is available
+  case ollama_client.model_exists(cfg.ollama.url, cfg.ollama.model) {
+    Ok(True) ->
+      io.println_error("Ollama model ready: " <> cfg.ollama.model)
+    Ok(False) -> {
+      io.println_error("Pulling Ollama model: " <> cfg.ollama.model)
+      case ollama_client.pull_model(cfg.ollama.url, cfg.ollama.model) {
+        Ok(_) -> io.println_error("Model pulled successfully")
+        Error(_) -> io.println_error("WARNING: Failed to pull model")
+      }
+    }
+    Error(_) -> io.println_error("WARNING: Ollama not available")
+  }
 
   // Start vault watcher
-  let assert Ok(_watcher_subject) = vault_watcher.start(cfg, embedder_subject)
-  io.println_error("Vault watcher started for: " <> cfg.vault.path)
+  case vault_watcher.start(cfg, embedder_subject) {
+    Ok(_) ->
+      io.println_error("Vault watcher started for: " <> cfg.vault.path)
+    Error(_) -> io.println_error("WARNING: Vault watcher failed to start")
+  }
 
   // Initial index
   io.println_error("Starting initial vault index...")
   process.send(embedder_subject, embedder.ReindexAll)
 
-  io.println_error("alex_memory is running.")
-
-  // Start MCP server on stdio (blocks until stdin closes)
-  mcp_server.start(cfg, embedder_subject)
+  io.println_error("Infrastructure setup complete")
+  Nil
 }
