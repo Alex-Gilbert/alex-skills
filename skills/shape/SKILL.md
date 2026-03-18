@@ -7,6 +7,8 @@ description: "Lightweight idea refinement through focused questioning. Use when 
 
 Challenge and refine an idea into something actionable through focused questioning. Lighter than brainstorming — no spec output, no approaches analysis. The goal is to stress-test the idea and sharpen it.
 
+**Vault formatting:** Follow `obsidian-markdown` skill conventions when writing content — wikilinks for vault references, callouts for structured info, proper frontmatter.
+
 ## Entry Points
 
 - `/shape` with no args — call `memory_list(type=idea, status=open)` to list open ideas. Present the list and let the user pick one.

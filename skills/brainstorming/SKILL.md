@@ -29,7 +29,7 @@ You MUST create a task for each of these items and complete them in order:
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
-6.5. **Store to memory** — After writing and committing the design doc:
+6.5. **Store to memory** — After writing and committing the design doc (follow `obsidian-markdown` skill conventions for vault content):
 <HARD-GATE>
 Do NOT invoke writing-plans until BOTH of these are confirmed complete:
 - Call memory_store with type=brainstorm for the full design

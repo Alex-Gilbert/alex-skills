@@ -7,6 +7,8 @@ description: "Store information to semantic memory. Use when user invokes /remem
 
 Store information as a searchable memory in the Obsidian vault.
 
+**Vault formatting:** Follow `obsidian-markdown` skill conventions when writing content — wikilinks for vault references, callouts for structured info, proper frontmatter.
+
 ## Before Storing
 
 1. **Determine memory type** from context:
@@ -18,6 +20,7 @@ Store information as a searchable memory in the Obsidian vault.
    - `session` — session summary (usually auto-generated)
    - `reference` — external links, docs, dashboards
    - `brainstorm` — brainstorm outputs, design specs
+   - `idea` — raw ideas for later development
 
 2. **Check for duplicates** — call `memory_find` with the content summary and a high similarity threshold. If a match scores >0.85, offer to update the existing memory instead of creating a new one.
 

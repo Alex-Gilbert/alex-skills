@@ -7,6 +7,8 @@ description: "Quick idea capture to semantic memory. Use when user invokes /idea
 
 Capture an idea to semantic memory with minimal friction. Speed is the priority.
 
+**Vault formatting:** Follow `obsidian-markdown` skill conventions when writing content — wikilinks for vault references, callouts for structured info, proper frontmatter.
+
 ## Flow
 
 1. **Get the idea** — If the user typed it inline (e.g., `/idea what if we added X`), use that. Otherwise ask: "What's the idea?"
