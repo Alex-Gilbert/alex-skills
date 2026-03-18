@@ -215,16 +215,6 @@ fn get_payload_string(
   }
 }
 
-fn get_payload_optional_string(
-  payload: decode.Dynamic,
-  field: String,
-) -> String {
-  case decode.run(payload, decode.at([field], decode.string)) {
-    Ok(value) -> value
-    Error(_) -> ""
-  }
-}
-
 // ---------- Tool handlers ----------
 
 fn handle_store(
@@ -341,7 +331,7 @@ fn handle_find(
                       get_payload_string(hit.payload, "vault_path")
                     let type_str = get_payload_string(hit.payload, "type")
                     let status_str =
-                      get_payload_optional_string(hit.payload, "status")
+                      get_payload_string(hit.payload, "status")
                     let score_str = float.to_string(hit.score)
 
                     let preview = case string.length(content) > 200 {
@@ -411,13 +401,16 @@ fn handle_list(
     {
       Error(_) -> error_result("Failed to list memories")
       Ok(points) -> {
+        // Deduplicate by vault_path (chunks produce multiple entries)
+        let unique_points = deduplicate_by_vault_path(points)
+
         let results =
-          list.map(points, fn(point) {
+          list.map(unique_points, fn(point) {
             let title = get_payload_string(point.payload, "title")
             let vault_path = get_payload_string(point.payload, "vault_path")
             let type_str = get_payload_string(point.payload, "type")
             let status_str =
-              get_payload_optional_string(point.payload, "status")
+              get_payload_string(point.payload, "status")
             let updated = get_payload_string(point.payload, "updated")
 
             "- **"
@@ -437,16 +430,13 @@ fn handle_list(
             }
           })
 
-        // Deduplicate by vault_path (chunks produce multiple entries)
-        let unique_results = deduplicate_results(results)
-
-        let result_text = case unique_results {
+        let result_text = case results {
           [] -> "No memories found matching the filters."
           _ ->
             "Found "
-            <> string.inspect(list.length(unique_results))
+            <> string.inspect(list.length(results))
             <> " memories:\n\n"
-            <> string.join(unique_results, "\n")
+            <> string.join(results, "\n")
         }
         text_result(result_text)
       }
@@ -454,22 +444,26 @@ fn handle_list(
   }
 }
 
-fn deduplicate_results(items: List(String)) -> List(String) {
-  do_deduplicate(items, [], [])
+fn deduplicate_by_vault_path(
+  points: List(qdrant_client.ScrollPoint),
+) -> List(qdrant_client.ScrollPoint) {
+  do_dedup_by_path(points, [], [])
 }
 
-fn do_deduplicate(
-  items: List(String),
-  seen: List(String),
-  acc: List(String),
-) -> List(String) {
-  case items {
+fn do_dedup_by_path(
+  points: List(qdrant_client.ScrollPoint),
+  seen_paths: List(String),
+  acc: List(qdrant_client.ScrollPoint),
+) -> List(qdrant_client.ScrollPoint) {
+  case points {
     [] -> list.reverse(acc)
-    [item, ..rest] ->
-      case list.contains(seen, item) {
-        True -> do_deduplicate(rest, seen, acc)
-        False -> do_deduplicate(rest, [item, ..seen], [item, ..acc])
+    [point, ..rest] -> {
+      let path = get_payload_string(point.payload, "vault_path")
+      case list.contains(seen_paths, path) {
+        True -> do_dedup_by_path(rest, seen_paths, acc)
+        False -> do_dedup_by_path(rest, [path, ..seen_paths], [point, ..acc])
       }
+    }
   }
 }
 

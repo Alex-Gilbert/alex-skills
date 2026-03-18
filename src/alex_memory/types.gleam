@@ -158,7 +158,7 @@ pub fn memory_type_to_dir(t: MemoryType) -> String {
     Bug -> "bugs"
     Decision -> "decisions"
     Project -> "projects"
-    Memory -> "memories"
+    Memory -> "memory"
     Pattern -> "patterns"
     Session -> "sessions"
     Reference -> "references"

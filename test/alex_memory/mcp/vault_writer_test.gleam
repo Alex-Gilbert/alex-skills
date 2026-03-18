@@ -1,6 +1,6 @@
 import alex_memory/mcp/vault_writer
 import alex_memory/types
-import gleam/option.{None, Some}
+import gleam/option.{Some}
 import gleam/string
 import gleeunit/should
 import simplifile

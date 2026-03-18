@@ -6,6 +6,8 @@ import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
 import alex_memory/types
 import gleam/erlang/process.{type Subject}
+import gleam/int
+import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{None, Some}
@@ -71,10 +73,18 @@ fn index_file(
   vault_relative: String,
 ) -> Nil {
   case simplifile.read(full_path) {
-    Error(_) -> Nil
+    Error(_) -> {
+      io.println_error("Embedder: failed to read file: " <> full_path)
+      Nil
+    }
     Ok(content) -> {
       case frontmatter.parse(content) {
-        Error(_) -> Nil
+        Error(e) -> {
+          io.println_error(
+            "Embedder: failed to parse frontmatter in " <> vault_relative <> ": " <> e,
+          )
+          Nil
+        }
         Ok(doc) -> {
           // Delete stale points for this file
           delete_file(config, vault_relative)
@@ -88,11 +98,19 @@ fn index_file(
             case
               ollama_client.embed(config.ollama.url, config.ollama.model, text)
             {
-              Error(_) -> Nil
+              Error(_) -> {
+                io.println_error(
+                  "Embedder: failed to embed chunk "
+                  <> int.to_string(chunk.index)
+                  <> " of "
+                  <> vault_relative,
+                )
+                Nil
+              }
               Ok(vector) -> {
                 let id = point_id.generate(vault_relative, chunk.index)
                 let payload = build_payload(doc, vault_relative, chunk)
-                let _ =
+                case
                   qdrant_client.upsert(
                     config.qdrant.url,
                     config.qdrant.collection,
@@ -100,7 +118,18 @@ fn index_file(
                     vector,
                     payload,
                   )
-                Nil
+                {
+                  Ok(_) -> Nil
+                  Error(_) -> {
+                    io.println_error(
+                      "Embedder: failed to upsert chunk "
+                      <> int.to_string(chunk.index)
+                      <> " of "
+                      <> vault_relative,
+                    )
+                    Nil
+                  }
+                }
               }
             }
           })
