@@ -30,8 +30,12 @@ You MUST create a task for each of these items and complete them in order:
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
 6. **Write design doc** — save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 6.5. **Store to memory** — After writing and committing the design doc:
-   - Call memory_store with type=brainstorm for the full design
-   - Extract each key decision and call memory_store with type=decision for each
+<HARD-GATE>
+Do NOT invoke writing-plans until BOTH of these are confirmed complete:
+- Call memory_store with type=brainstorm for the full design
+- Extract each key decision and call memory_store with type=decision for each
+If the user started from a stored idea (type=idea), also call memory_update to set the idea's status to `archived`.
+</HARD-GATE>
 7. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
 ## Process Flow
@@ -68,6 +72,7 @@ digraph brainstorming {
 **Understanding the idea:**
 
 - Check out the current project state first (files, docs, recent commits)
+- If the user references a stored idea or came from `/shape`, pull it from the vault via `memory_find(type=idea)` and use it as starting context. Display the idea (and its shaped version if status is `active`) so both parties start aligned.
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea

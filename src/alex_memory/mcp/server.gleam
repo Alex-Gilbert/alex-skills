@@ -561,7 +561,7 @@ fn handle_reindex(
 fn store_schema() -> mcp.ToolInputSchema {
   let assert Ok(schema) =
     mcp.tool_input_schema(
-      "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\",\"description\":\"Title of the memory\"},\"content\":{\"type\":\"string\",\"description\":\"Markdown content of the memory\"},\"memory_type\":{\"type\":\"string\",\"description\":\"Type of memory: bug, decision, project, memory, pattern, session, reference, brainstorm\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\"]},\"status\":{\"type\":\"string\",\"description\":\"Optional status: open, resolved, active, archived, wontfix\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"severity\":{\"type\":\"string\",\"description\":\"Optional severity for bugs: p0, p1, p2, p3\",\"enum\":[\"p0\",\"p1\",\"p2\",\"p3\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Optional tags for categorization\"}},\"required\":[\"title\",\"content\",\"memory_type\"]}",
+      "{\"type\":\"object\",\"properties\":{\"title\":{\"type\":\"string\",\"description\":\"Title of the memory\"},\"content\":{\"type\":\"string\",\"description\":\"Markdown content of the memory\"},\"memory_type\":{\"type\":\"string\",\"description\":\"Type of memory: bug, decision, project, memory, pattern, session, reference, brainstorm, idea\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\",\"idea\"]},\"status\":{\"type\":\"string\",\"description\":\"Optional status: open, resolved, active, archived, wontfix\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"severity\":{\"type\":\"string\",\"description\":\"Optional severity for bugs: p0, p1, p2, p3\",\"enum\":[\"p0\",\"p1\",\"p2\",\"p3\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Optional tags for categorization\"}},\"required\":[\"title\",\"content\",\"memory_type\"]}",
     )
   schema
 }
@@ -569,7 +569,7 @@ fn store_schema() -> mcp.ToolInputSchema {
 fn find_schema() -> mcp.ToolInputSchema {
   let assert Ok(schema) =
     mcp.tool_input_schema(
-      "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Semantic search query\"},\"type\":{\"type\":\"string\",\"description\":\"Filter by memory type\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\"]},\"status\":{\"type\":\"string\",\"description\":\"Filter by status\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Filter by tags (all must match)\"},\"author\":{\"type\":\"string\",\"description\":\"Filter by author\"},\"limit\":{\"type\":\"integer\",\"description\":\"Maximum number of results (default: 10)\"}},\"required\":[\"query\"]}",
+      "{\"type\":\"object\",\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"Semantic search query\"},\"type\":{\"type\":\"string\",\"description\":\"Filter by memory type\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\",\"idea\"]},\"status\":{\"type\":\"string\",\"description\":\"Filter by status\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Filter by tags (all must match)\"},\"author\":{\"type\":\"string\",\"description\":\"Filter by author\"},\"limit\":{\"type\":\"integer\",\"description\":\"Maximum number of results (default: 10)\"}},\"required\":[\"query\"]}",
     )
   schema
 }
@@ -577,7 +577,7 @@ fn find_schema() -> mcp.ToolInputSchema {
 fn list_schema() -> mcp.ToolInputSchema {
   let assert Ok(schema) =
     mcp.tool_input_schema(
-      "{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\",\"description\":\"Filter by memory type\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\"]},\"status\":{\"type\":\"string\",\"description\":\"Filter by status\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Filter by tags\"},\"author\":{\"type\":\"string\",\"description\":\"Filter by author\"},\"sort_by\":{\"type\":\"string\",\"description\":\"Sort field (e.g. updated, created)\"}}}",
+      "{\"type\":\"object\",\"properties\":{\"type\":{\"type\":\"string\",\"description\":\"Filter by memory type\",\"enum\":[\"bug\",\"decision\",\"project\",\"memory\",\"pattern\",\"session\",\"reference\",\"brainstorm\",\"idea\"]},\"status\":{\"type\":\"string\",\"description\":\"Filter by status\",\"enum\":[\"open\",\"resolved\",\"active\",\"archived\",\"wontfix\"]},\"tags\":{\"type\":\"array\",\"items\":{\"type\":\"string\"},\"description\":\"Filter by tags\"},\"author\":{\"type\":\"string\",\"description\":\"Filter by author\"},\"sort_by\":{\"type\":\"string\",\"description\":\"Sort field (e.g. updated, created)\"}}}",
     )
   schema
 }

@@ -11,6 +11,7 @@ pub type MemoryType {
   Session
   Reference
   Brainstorm
+  Idea
 }
 
 pub type Status {
@@ -90,6 +91,7 @@ pub fn memory_type_to_string(t: MemoryType) -> String {
     Session -> "session"
     Reference -> "reference"
     Brainstorm -> "brainstorm"
+    Idea -> "idea"
   }
 }
 
@@ -103,6 +105,7 @@ pub fn memory_type_from_string(s: String) -> Result(MemoryType, String) {
     "session" -> Ok(Session)
     "reference" -> Ok(Reference)
     "brainstorm" -> Ok(Brainstorm)
+    "idea" -> Ok(Idea)
     _ -> Error("Unknown memory type: " <> s)
   }
 }
@@ -164,5 +167,6 @@ pub fn memory_type_to_dir(t: MemoryType) -> String {
     Session -> "sessions"
     Reference -> "references"
     Brainstorm -> "brainstorms"
+    Idea -> "ideas"
   }
 }

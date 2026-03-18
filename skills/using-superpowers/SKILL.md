@@ -123,3 +123,5 @@ These skills manage semantic memory across sessions:
 | `bugs` | Bug tracking and management |
 | `status` | Project progress tracking |
 | `session-end` | Summarize and store session before ending |
+| `idea` | Quick idea capture to semantic memory |
+| `shape` | Lightweight idea refinement through questioning |

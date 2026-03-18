@@ -20,6 +20,12 @@ pub fn status_to_string_test() {
   types.status_to_string(types.Resolved) |> should.equal("resolved")
 }
 
+pub fn idea_type_roundtrip_test() {
+  types.memory_type_to_string(types.Idea) |> should.equal("idea")
+  types.memory_type_from_string("idea") |> should.equal(Ok(types.Idea))
+  types.memory_type_to_dir(types.Idea) |> should.equal("ideas")
+}
+
 pub fn metadata_has_author_field_test() {
   let meta =
     types.Metadata(
