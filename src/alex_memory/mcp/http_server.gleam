@@ -81,7 +81,7 @@ fn handle_store(
     Ok(args) ->
       case server.handle_store(config, embedder_subject, args) {
         Ok(msg) -> text_response(200, msg)
-        Error(msg) -> text_response(400, msg)
+        Error(msg) -> text_response(500, msg)
       }
   }
 }
@@ -123,7 +123,6 @@ fn handle_list(
         Some(t) -> Some(string.split(t, ","))
       },
       author: get_param("author"),
-      sort_by: get_param("sort_by"),
     )
 
   case server.handle_list(config, args) {
@@ -141,7 +140,7 @@ fn handle_update(
     Ok(args) ->
       case server.handle_update(config, args) {
         Ok(msg) -> text_response(200, msg)
-        Error(msg) -> text_response(400, msg)
+        Error(msg) -> text_response(500, msg)
       }
   }
 }

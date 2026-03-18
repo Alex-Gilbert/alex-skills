@@ -47,7 +47,6 @@ pub type ListArgs {
     status: Option(String),
     tags: Option(List(String)),
     author: Option(String),
-    sort_by: Option(String),
   )
 }
 
@@ -307,9 +306,7 @@ pub fn handle_find(
       {
         Error(_) -> Error("Search failed")
         Ok(hits) -> {
-          case hits {
-            [] -> Ok("No memories found matching your query.")
-            _ -> {
+          {
               let rows =
                 list.map(hits, fn(hit) {
                   let title = get_payload_string(hit.payload, "title")
@@ -331,7 +328,6 @@ pub fn handle_find(
                   [title, score_str, type_str, vault_path, status_str, author_str, preview]
                 })
               Ok(toon.table("results", ["title", "score", "type", "path", "status", "author", "preview"], rows))
-            }
           }
         }
       }
@@ -358,9 +354,7 @@ pub fn handle_list(
       // Deduplicate by vault_path (chunks produce multiple entries)
       let unique_points = deduplicate_by_vault_path(points)
 
-      case unique_points {
-        [] -> Ok("No memories found matching the filters.")
-        _ -> {
+      {
           let rows =
             list.map(unique_points, fn(point) {
               let title = get_payload_string(point.payload, "title")
@@ -374,7 +368,6 @@ pub fn handle_list(
               [title, type_str, status_str, author_str, vault_path, updated]
             })
           Ok(toon.table("memories", ["title", "type", "status", "author", "path", "updated"], rows))
-        }
       }
     }
   }
