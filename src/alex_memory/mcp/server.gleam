@@ -2,6 +2,7 @@ import alex_memory/config.{type Config}
 import alex_memory/indexer/embedder
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
+import alex_memory/mcp/author
 import alex_memory/mcp/vault_writer
 import alex_memory/types
 import gleam/dynamic/decode
@@ -9,6 +10,7 @@ import gleam/erlang/process.{type Subject}
 import gleam/float
 import gleam/json
 import gleam/list
+import gleam/result
 import gleam/option.{type Option, None, Some}
 import gleam/string
 import mcp_toolkit
@@ -271,6 +273,11 @@ fn handle_store(
               None -> []
             }
 
+            // Get author from request context, fall back to config default
+            let request_author =
+              author.get()
+              |> result.unwrap(config.mcp.default_author)
+
             // Write to vault
             case
               vault_writer.write_memory(
@@ -282,7 +289,7 @@ fn handle_store(
                 status,
                 severity,
                 tags,
-                config.mcp.default_author,
+                request_author,
               )
             {
               Ok(vault_path) -> {

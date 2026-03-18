@@ -1,8 +1,11 @@
 import alex_memory/config.{type Config}
+import alex_memory/mcp/author
 import gleam/bytes_tree
 import gleam/http/request
 import gleam/http/response
 import gleam/io
+import gleam/list
+import gleam/result
 import gleam/string
 import mcp_toolkit
 import mcp_toolkit/transport/rpc
@@ -16,8 +19,18 @@ pub fn start(
   server: mcp_toolkit.Server,
 ) -> Result(Nil, String) {
   let registry = sse.start_registry()
+  let default_author = config.mcp.default_author
 
   let handler = fn(req: request.Request(mist.Connection)) {
+    // Extract author from ?author= query param, fall back to config default
+    let req_author =
+      request.get_query(req)
+      |> result.unwrap([])
+      |> list.find(fn(pair) { pair.0 == "author" })
+      |> result.map(fn(pair) { pair.1 })
+      |> result.unwrap(default_author)
+    author.set(req_author)
+
     case request.path_segments(req) {
       ["sse"] -> sse.handle_sse(req, registry, server)
       ["mcp"] -> rpc.handle_http_rpc(req, server, 1_000_000)
