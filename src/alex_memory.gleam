@@ -24,28 +24,12 @@ pub fn main() {
   // Start infrastructure setup in a background process
   let _ = process.spawn(fn() { setup_infrastructure(cfg, embedder_subject) })
 
-  // Start HTTP server if enabled (non-blocking — Mist runs in background)
-  case cfg.mcp.http_enabled {
-    True -> {
-      let _ = http_server.start(cfg, server)
-      Nil
-    }
-    False -> Nil
-  }
-
-  // Start stdio transport (blocks until stdin closes)
+  // Start HTTP server (fatal on failure — e.g. port conflict)
+  let assert Ok(_) = http_server.start(cfg, server)
   io.println_error("MCP server ready")
-  mcp_server.run_stdio(server)
 
-  // If HTTP is enabled, keep the BEAM alive after stdio closes
-  // so remote clients aren't dropped when the local plugin disconnects.
-  case cfg.mcp.http_enabled {
-    True -> {
-      io.println_error("Stdio closed, HTTP server still running. Ctrl+C to stop.")
-      process.sleep_forever()
-    }
-    False -> Nil
-  }
+  // Keep BEAM alive for HTTP clients
+  process.sleep_forever()
 }
 
 fn setup_infrastructure(
