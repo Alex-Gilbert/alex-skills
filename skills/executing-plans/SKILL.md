@@ -37,8 +37,14 @@ After all tasks complete and verified:
 - Follow that skill to verify tests, present options, execute choice
 
 After completing the plan:
-- memory_store any notable outcomes or lessons learned (type=pattern or type=decision)
-- If bugs were discovered during execution, ensure they're stored (type=bug)
+- Store any notable outcomes or lessons learned:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -d '{"title": "TITLE", "content": "CONTENT", "memory_type": "pattern", "tags": ["TAG"]}' \
+    $MEMORY_API_URL/memories
+  ```
+  Use `memory_type` of `pattern` or `decision` as appropriate.
+- If bugs were discovered during execution, store them with `memory_type: "bug"`.
 
 ## When to Stop and Ask for Help
 

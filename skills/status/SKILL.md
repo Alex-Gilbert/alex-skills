@@ -10,10 +10,19 @@ Track project progress stored in the semantic memory system.
 ## Subcommands
 
 ### `/status` (no args)
-List all active projects: call `memory_list` with `type=project, status=active`.
+List all active projects:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  "$MEMORY_API_URL/memories?type=project&status=active"
+```
 
 ### `/status <project>`
-Show details for a specific project: call `memory_find` with the project name/description and `type=project`.
+Show details for a specific project:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  -d '{"query": "PROJECT_NAME", "type": "project"}' \
+  $MEMORY_API_URL/memories/search
+```
 
 ## Output Format
 

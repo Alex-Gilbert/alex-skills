@@ -11,18 +11,42 @@ Manage bugs stored in the semantic memory system.
 ## Subcommands
 
 ### `/bugs` (no args)
-List all open bugs: call `memory_list` with `type=bug, status=open`.
+List all open bugs:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  "$MEMORY_API_URL/memories?type=bug&status=open"
+```
 
 ### `/bugs <tag>`
-List open bugs filtered by tag: call `memory_list` with `type=bug, status=open, tags=[tag]`.
+List open bugs filtered by tag:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  "$MEMORY_API_URL/memories?type=bug&status=open&tags=TAG"
+```
 
 ### `/bugs resolve <query>`
-1. Search for the bug: call `memory_find` with the query and `type=bug, status=open`
+1. Search for the bug:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"query": "QUERY", "type": "bug", "status": "open"}' \
+     $MEMORY_API_URL/memories/search
+   ```
 2. Present the top match and confirm with the user
-3. Update status to resolved: call `memory_update` with `vault_path` and `status=resolved`
+3. Update status to resolved:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -X PATCH \
+     -d '{"vault_path": "PATH", "status": "resolved"}' \
+     $MEMORY_API_URL/memories
+   ```
 
 ### `/bugs add <description>`
-Create a new bug: call `memory_store` with `memory_type=bug, status=open`, determining title, severity, and tags from the description.
+Create a new bug, determining title, severity, and tags from the description:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  -d '{"title": "TITLE", "content": "DESCRIPTION", "memory_type": "bug", "status": "open", "severity": "SEVERITY", "tags": ["TAG"]}' \
+  $MEMORY_API_URL/memories
+```
 
 ## Output Format
 

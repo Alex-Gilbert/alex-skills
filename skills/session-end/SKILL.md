@@ -14,7 +14,13 @@ Summarize the current conversation and store key information to memory before en
 2. **Extract decisions** — any design or architecture decisions made → store each as `type=decision`
 3. **Extract bugs** — any confirmed bugs identified → store each as `type=bug, status=open`
 4. **Extract patterns** — any code patterns or conventions agreed upon → store each as `type=pattern`
-5. **Store session summary** — call `memory_store` with `type=session`, including:
+5. **Store session summary** — store with `type=session`:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"title": "TITLE", "content": "CONTENT", "memory_type": "session", "tags": ["TAG"]}' \
+     $MEMORY_API_URL/memories
+   ```
+   Include in content:
    - What was accomplished
    - Key decisions made
    - Bugs found
@@ -23,4 +29,9 @@ Summarize the current conversation and store key information to memory before en
 
 ## Before Storing Each Item
 
-Check for duplicates with `memory_find` (>0.85 similarity threshold) to avoid near-duplicate entries.
+Check for duplicates (>0.85 similarity threshold) to avoid near-duplicate entries:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  -d '{"query": "CONTENT_SUMMARY", "limit": 5}' \
+  $MEMORY_API_URL/memories/search
+```

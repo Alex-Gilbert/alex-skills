@@ -21,7 +21,13 @@ Store information as a searchable memory in the Obsidian vault.
    - `brainstorm` — brainstorm outputs, design specs
    - `idea` — raw ideas for later development
 
-2. **Check for duplicates** — call `memory_find` with the content summary and a high similarity threshold. If a match scores >0.85, offer to update the existing memory instead of creating a new one.
+2. **Check for duplicates** — search for the content summary with a high similarity threshold:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"query": "CONTENT_SUMMARY", "limit": 5}' \
+     $MEMORY_API_URL/memories/search
+   ```
+   If a match scores >0.85, offer to update the existing memory instead of creating a new one.
 
 3. **Determine metadata:**
    - `status`: open/active/resolved as appropriate
@@ -30,7 +36,12 @@ Store information as a searchable memory in the Obsidian vault.
 
 ## Storing
 
-Call `memory_store` with:
+Store the memory:
+```bash
+curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+  -d '{"title": "TITLE", "content": "CONTENT", "memory_type": "TYPE", "status": "STATUS", "severity": "SEVERITY", "tags": ["TAG"]}' \
+  $MEMORY_API_URL/memories
+```
 - `title`: concise, descriptive title
 - `content`: full content in markdown
 - `memory_type`: determined type

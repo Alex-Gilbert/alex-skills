@@ -19,7 +19,12 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 - (User preferences for plan location override this default)
 
 0. **Recall context** — Before writing the plan:
-   - memory_find for related decisions and patterns
+   - Search for related decisions and patterns:
+     ```bash
+     curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+       -d '{"query": "RELEVANT_TOPIC", "limit": 10}' \
+       $MEMORY_API_URL/memories/search
+     ```
    - Surface constraints from prior brainstorms
    - Check for open bugs that might affect the implementation
 

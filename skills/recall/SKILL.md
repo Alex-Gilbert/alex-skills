@@ -9,12 +9,17 @@ Search the semantic memory system for relevant context.
 
 ## How to Search
 
-1. Call `memory_find` with a natural language query describing what you're looking for.
+1. Search with a natural language query describing what you're looking for:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"query": "SEARCH_TERMS", "limit": 10}' \
+     $MEMORY_API_URL/memories/search
+   ```
 
-2. **Optional filters** to narrow results:
+2. **Optional fields** in the request body to narrow results:
    - `type`: filter by memory type (bug, decision, pattern, etc.)
    - `status`: filter by status (open, resolved, active, etc.)
-   - `tags`: filter by tags
+   - `tags`: filter by tags (array)
    - `limit`: max results (default 10)
 
 ## Presenting Results

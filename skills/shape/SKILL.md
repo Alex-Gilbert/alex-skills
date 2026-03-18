@@ -10,8 +10,17 @@ Challenge and refine an idea into something actionable through focused questioni
 
 ## Entry Points
 
-- `/shape` with no args — call `memory_list(type=idea, status=open)` to list open ideas. Present the list and let the user pick one.
-- `/shape <query>` — call `memory_find` with the query filtered to `type=idea`. If a match is found, use it. If no match, start shaping the query as a fresh concept.
+- `/shape` with no args — list open ideas and let the user pick one:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    "$MEMORY_API_URL/memories?type=idea&status=open"
+  ```
+- `/shape <query>` — search for a matching idea. If found, use it. If no match, start shaping the query as a fresh concept:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -d '{"query": "QUERY", "type": "idea"}' \
+    $MEMORY_API_URL/memories/search
+  ```
 
 ## Flow
 
@@ -31,9 +40,13 @@ Challenge and refine an idea into something actionable through focused questioni
    - **Open questions** — things still unresolved
    - **Risks** — what could go wrong
    Present this to the user for approval.
-5. **Update vault** — call `memory_update` on the idea's vault path:
-   - `content`: the shaped version, with the original raw idea preserved in a `## Original Idea` section at the bottom
-   - `status`: `active`
+5. **Update vault** — update the idea with the shaped version:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -X PATCH \
+     -d '{"vault_path": "PATH", "status": "active", "content": "SHAPED_VERSION\n\n## Original Idea\nORIGINAL_TEXT"}' \
+     $MEMORY_API_URL/memories
+   ```
 6. **Confirm** — "Idea shaped. Use the brainstorming skill when you're ready to turn this into a spec."
 
 ## Edge Cases

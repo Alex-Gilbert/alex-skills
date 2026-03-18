@@ -22,9 +22,18 @@ Every project goes through this process. A todo list, a single-function utility,
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Explore project context** — check files, docs, recent commits
-   THEN call memory_find for related decisions, brainstorms, and open bugs.
-   Call memory_list(type=pattern) for established conventions in this area.
+1. **Explore project context** — check files, docs, recent commits.
+   THEN search for related decisions, brainstorms, and open bugs:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"query": "RELEVANT_TOPIC", "limit": 10}' \
+     $MEMORY_API_URL/memories/search
+   ```
+   Also check for established conventions:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     "$MEMORY_API_URL/memories?type=pattern"
+   ```
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
@@ -33,9 +42,25 @@ You MUST create a task for each of these items and complete them in order:
 6.5. **Store to memory** — After writing and committing the design doc:
 <HARD-GATE>
 Do NOT invoke writing-plans until BOTH of these are confirmed complete:
-- Call memory_store with type=brainstorm for the full design
-- Extract each key decision and call memory_store with type=decision for each
-If the user started from a stored idea (type=idea), also call memory_update to set the idea's status to `archived`.
+- Store the full design as a brainstorm:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -d '{"title": "TITLE", "content": "FULL_DESIGN", "memory_type": "brainstorm", "tags": ["TAG"]}' \
+    $MEMORY_API_URL/memories
+  ```
+- Extract each key decision and store individually:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -d '{"title": "DECISION_TITLE", "content": "DECISION_CONTENT", "memory_type": "decision", "tags": ["TAG"]}' \
+    $MEMORY_API_URL/memories
+  ```
+If the user started from a stored idea (type=idea), also update the idea's status to `archived`:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -X PATCH \
+    -d '{"vault_path": "IDEA_PATH", "status": "archived"}' \
+    $MEMORY_API_URL/memories
+  ```
 </HARD-GATE>
 7. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
@@ -73,7 +98,13 @@ digraph brainstorming {
 **Understanding the idea:**
 
 - Check out the current project state first (files, docs, recent commits)
-- If the user references a stored idea or came from `/shape`, pull it from the vault via `memory_find(type=idea)` and use it as starting context. Display the idea (and its shaped version if status is `active`) so both parties start aligned.
+- If the user references a stored idea or came from `/shape`, pull it from the vault and use it as starting context:
+  ```bash
+  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+    -d '{"query": "IDEA_QUERY", "type": "idea"}' \
+    $MEMORY_API_URL/memories/search
+  ```
+  Display the idea (and its shaped version if status is `active`) so both parties start aligned.
 - Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
 - If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal design flow. Each sub-project gets its own spec → plan → implementation cycle.
 - For appropriately-scoped projects, ask questions one at a time to refine the idea

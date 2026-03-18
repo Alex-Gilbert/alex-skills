@@ -85,8 +85,12 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 
 4. **Iterate or advance** — if feedback changes current screen, write a new file (e.g., `layout-v2.html`). Only move to the next question when the current step is validated.
 
-5. **Store diagrams to memory** — when a diagram, architecture visual, or mockup is finalized (user approves and you're moving on), call `memory_store` with:
-   - `memory_type`: `brainstorm`
+5. **Store diagrams to memory** — when a diagram, architecture visual, or mockup is finalized (user approves and you're moving on), store it:
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"title": "Architecture Diagram — Auth Flow", "content": "DESCRIPTION", "memory_type": "brainstorm", "tags": ["TAG"]}' \
+     $MEMORY_API_URL/memories
+   ```
    - `title`: descriptive name (e.g., "Architecture Diagram — Auth Flow")
    - `content`: a text description of what the diagram shows — components, relationships, data flow, and the key decisions it captures. Include enough detail that someone could reconstruct the diagram from the description alone.
    - `tags`: relevant project/topic tags

@@ -48,8 +48,17 @@ Use for ANY technical issue:
 You MUST complete each phase before proceeding to the next.
 
 0. **Check memory** — Before investigating:
-   - memory_find for prior bugs with similar symptoms
-   - memory_list(type=bug, status=resolved) to check if this was fixed before
+   - Search for prior bugs with similar symptoms:
+     ```bash
+     curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+       -d '{"query": "SYMPTOM_DESCRIPTION", "type": "bug"}' \
+       $MEMORY_API_URL/memories/search
+     ```
+   - Check if this was fixed before:
+     ```bash
+     curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+       "$MEMORY_API_URL/memories?type=bug&status=resolved"
+     ```
    If a prior resolution exists, try that fix first.
 
 ### Phase 1: Root Cause Investigation
@@ -293,8 +302,12 @@ These techniques are part of systematic debugging and available in this director
 - **superpowers:verification-before-completion** - Verify fix worked before claiming success
 
 N. **Store resolution** — After the bug is fixed:
-   - memory_store with type=bug, status=resolved
-   - Include: symptoms, root cause, fix applied, files changed
+   ```bash
+   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
+     -d '{"title": "TITLE", "content": "Symptoms: ...\nRoot cause: ...\nFix: ...\nFiles changed: ...", "memory_type": "bug", "status": "resolved", "tags": ["TAG"]}' \
+     $MEMORY_API_URL/memories
+   ```
+   Include: symptoms, root cause, fix applied, files changed
 
 ## Real-World Impact
 
