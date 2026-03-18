@@ -1,0 +1,6 @@
+{
+  "alex-memory": {
+    "type": "http",
+    "url": "http://archbtw.story-pike.ts.net:7890/mcp"
+  }
+}

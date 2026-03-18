@@ -33,6 +33,7 @@ pub fn start(
 
   case
     mist.new(handler)
+    |> mist.bind("0.0.0.0")
     |> mist.port(port)
     |> mist.start
   {
