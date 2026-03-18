@@ -23,7 +23,6 @@ mist = ">= 5.0.0 and < 6.0.0"
 simplifile = ">= 2.4.0 and < 3.0.0"
 tom = ">= 2.0.1 and < 3.0.0"
 gleam_crypto = ">= 1.5.1 and < 2.0.0"
-mcp_toolkit = ">= 0.3.1 and < 1.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"
