@@ -31,7 +31,7 @@ tags: [project-name, topic]
 created: 2026-03-18
 updated: 2026-03-18
 source: conversation
-author: alex@greystone
+author: alex@example.com
 ---
 ```
 
@@ -79,4 +79,3 @@ Useful types for memories:
 - Use `## Sections` for logical divisions
 - Prefer bullet lists over prose for scannable content
 - Use tables for comparative data
-- Keep paragraphs short — vault notes are for reference, not reading

@@ -71,6 +71,17 @@ digraph skill_flow {
 }
 ```
 
+## Skill Dependencies (`requires_skills`)
+
+Some skills declare `requires_skills: [skill-name]` in their frontmatter. When you load a skill that has this field, you **MUST invoke each listed skill BEFORE following the loaded skill's instructions.**
+
+This is not optional. The required skills provide formatting rules, conventions, or context that the parent skill depends on. Skipping them will produce incorrect output.
+
+```
+Skill loaded → has requires_skills? → YES → invoke each required skill first → then follow loaded skill
+                                    → NO  → follow loaded skill directly
+```
+
 ## Red Flags
 
 These thoughts mean STOP—you're rationalizing:

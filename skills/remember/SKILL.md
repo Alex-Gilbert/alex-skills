@@ -1,13 +1,12 @@
 ---
 name: remember
 description: "Store information to semantic memory. Use when user invokes /remember or when Claude identifies something worth storing (bug confirmed, correction received, pattern discovered)."
+requires_skills: [obsidian-markdown]
 ---
 
 # Remember — Store to Memory
 
 Store information as a searchable memory in the Obsidian vault.
-
-**Vault formatting:** Follow `obsidian-markdown` skill conventions when writing content — wikilinks for vault references, callouts for structured info, proper frontmatter.
 
 ## Before Storing
 

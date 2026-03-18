@@ -1,6 +1,7 @@
 ---
 name: session-end
 description: "Summarize and store session before ending. Use when user invokes /session-end or when wrapping up a conversation."
+requires_skills: [obsidian-markdown]
 ---
 
 # Session End — Summarize and Store

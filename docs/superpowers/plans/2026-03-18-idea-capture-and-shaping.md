@@ -96,11 +96,11 @@ git commit -m "feat: add Idea variant to MemoryType enum"
 ### Task 2: Add `"idea"` to MCP server schema enums
 
 **Files:**
-- Modify: `src/alex_memory/mcp/server.gleam:556-578` (three schema functions)
+- Modify: `src/alex_memory/mcp/server.gleam:561-583` (three schema functions)
 
 - [ ] **Step 1: Update store_schema()**
 
-In `src/alex_memory/mcp/server.gleam` line 559, in the JSON string for `store_schema()`, change the `memory_type` enum from:
+In `src/alex_memory/mcp/server.gleam` line 564, in the JSON string for `store_schema()`, change the `memory_type` enum from:
 
 ```
 "enum":["bug","decision","project","memory","pattern","session","reference","brainstorm"]
@@ -120,7 +120,7 @@ Also update the description string to include `idea`:
 
 - [ ] **Step 2: Update find_schema()**
 
-In line 567, update the `type` enum in the JSON string from:
+In line 572, update the `type` enum in the JSON string from:
 
 ```
 "enum":["bug","decision","project","memory","pattern","session","reference","brainstorm"]
@@ -134,7 +134,7 @@ to:
 
 - [ ] **Step 3: Update list_schema()**
 
-In line 575, same change — add `"idea"` to the `type` enum array.
+In line 580, same change — add `"idea"` to the `type` enum array.
 
 - [ ] **Step 4: Run full test suite**
 

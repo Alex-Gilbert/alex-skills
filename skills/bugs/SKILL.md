@@ -1,6 +1,7 @@
 ---
 name: bugs
 description: "Bug tracking and management via semantic memory. Use when user invokes /bugs to list, filter, add, or resolve bugs."
+requires_skills: [obsidian-markdown]
 ---
 
 # Bugs — Bug Management

@@ -1,13 +1,12 @@
 ---
 name: idea
 description: "Quick idea capture to semantic memory. Use when user invokes /idea or expresses a raw idea worth capturing."
+requires_skills: [obsidian-markdown]
 ---
 
 # Idea — Quick Capture
 
 Capture an idea to semantic memory with minimal friction. Speed is the priority.
-
-**Vault formatting:** Follow `obsidian-markdown` skill conventions when writing content — wikilinks for vault references, callouts for structured info, proper frontmatter.
 
 ## Flow
 
