@@ -85,7 +85,14 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 
 4. **Iterate or advance** — if feedback changes current screen, write a new file (e.g., `layout-v2.html`). Only move to the next question when the current step is validated.
 
-5. **Unload when returning to terminal** — when the next step doesn't need the browser (e.g., a clarifying question, a tradeoff discussion), push a waiting screen to clear the stale content:
+5. **Store diagrams to memory** — when a diagram, architecture visual, or mockup is finalized (user approves and you're moving on), call `memory_store` with:
+   - `memory_type`: `brainstorm`
+   - `title`: descriptive name (e.g., "Architecture Diagram — Auth Flow")
+   - `content`: a text description of what the diagram shows, the key decisions it captures, and the file path where the HTML lives (e.g., `Project: .superpowers/brainstorm/<session>/auth-flow.html`)
+   - `tags`: relevant project/topic tags
+   This ensures diagrams are searchable in future conversations even if the visual files are lost.
+
+6. **Unload when returning to terminal** — when the next step doesn't need the browser (e.g., a clarifying question, a tradeoff discussion), push a waiting screen to clear the stale content:
 
    ```html
    <!-- filename: waiting.html (or waiting-2.html, etc.) -->
@@ -96,7 +103,7 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 
    This prevents the user from staring at a resolved choice while the conversation has moved on. When the next visual question comes up, push a new content file as usual.
 
-6. Repeat until done.
+7. Repeat until done.
 
 ## Writing Content Fragments
 
