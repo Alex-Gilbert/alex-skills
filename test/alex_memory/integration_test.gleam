@@ -20,7 +20,7 @@ pub fn full_pipeline_test() {
     qdrant_client.ensure_collection(
       "http://localhost:6333",
       test_collection,
-      768,
+      1024,
     )
 
   // 1. Write a memory to vault
@@ -41,10 +41,10 @@ pub fn full_pipeline_test() {
   let full_path = test_vault <> "/" <> path
   let assert Ok(content) = simplifile.read(full_path)
   let assert Ok(embedding) =
-    ollama_client.embed("http://localhost:11434", "nomic-embed-text", content)
+    ollama_client.embed("http://localhost:11434", "snowflake-arctic-embed:l", content)
 
   // Verify embedding dimension
-  list.length(embedding) |> should.equal(768)
+  list.length(embedding) |> should.equal(1024)
 
   // 3. Upsert to Qdrant
   let payload =
@@ -72,7 +72,7 @@ pub fn full_pipeline_test() {
   let assert Ok(query_vec) =
     ollama_client.embed(
       "http://localhost:11434",
-      "nomic-embed-text",
+      "snowflake-arctic-embed:l",
       "cache invalidation problem",
     )
   let assert Ok(results) =

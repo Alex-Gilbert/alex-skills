@@ -11,18 +11,18 @@ pub fn embed_text_test() {
   let result =
     ollama_client.embed(
       "http://localhost:11434",
-      "nomic-embed-text",
+      "snowflake-arctic-embed:l",
       "The scheduler can deadlock when two recipes share an ingredient",
     )
   result |> should.be_ok
 
   let assert Ok(embedding) = result
-  // nomic-embed-text produces 768-dimensional vectors
-  list.length(embedding) |> should.equal(768)
+  // snowflake-arctic-embed:l produces 1024-dimensional vectors
+  list.length(embedding) |> should.equal(1024)
 }
 
 pub fn model_exists_test() {
   let result =
-    ollama_client.model_exists("http://localhost:11434", "nomic-embed-text")
+    ollama_client.model_exists("http://localhost:11434", "snowflake-arctic-embed:l")
   result |> should.equal(Ok(True))
 }

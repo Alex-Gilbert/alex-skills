@@ -11,10 +11,10 @@ const test_collection = "test_alex_memory"
 pub fn full_lifecycle_test() {
   // 1. Create collection
   let assert Ok(_) =
-    qdrant_client.ensure_collection(base_url, test_collection, 768)
+    qdrant_client.ensure_collection(base_url, test_collection, 1024)
 
-  // 2. Upsert a point with fake 768-dim vector (all 0.1)
-  let vector = list.repeat(0.1, 768)
+  // 2. Upsert a point with fake 1024-dim vector (all 0.1)
+  let vector = list.repeat(0.1, 1024)
   let payload =
     json.object([
       #("vault_path", json.string("test/doc.md")),
