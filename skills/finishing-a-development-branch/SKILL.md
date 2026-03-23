@@ -1,6 +1,7 @@
 ---
 name: finishing-a-development-branch
 description: Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup
+requires_skills: [linear-integration]
 ---
 
 # Finishing a Development Branch
@@ -84,6 +85,8 @@ git merge <feature-branch>
 git branch -d <feature-branch>
 ```
 
+If Linear is available, move all associated Linear issues to `Done`.
+
 Then: Cleanup worktree (Step 5)
 
 #### Option 2: Push and Create PR
@@ -102,6 +105,9 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 EOF
 )"
 ```
+If Linear is available and there are associated Linear issues:
+- Add a `## Linear` section to the PR body listing the issue IDs (e.g., `Closes ENG-42, ENG-43, ENG-44`)
+- Linear auto-links PRs when issue IDs appear in the PR body
 
 Then: Cleanup worktree (Step 5)
 
