@@ -1,7 +1,7 @@
 ---
 name: brainstorming
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
-requires_skills: [obsidian-markdown]
+requires_skills: [obsidian-markdown, linear-integration]
 ---
 
 # Brainstorming Ideas Into Designs
@@ -34,6 +34,9 @@ You MUST create a task for each of these items and complete them in order:
    curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      "$MEMORY_API_URL/memories?type=pattern"
    ```
+   If Linear is available (per linear-integration skill), also search Linear for related issues:
+   - Search for issues related to the topic being brainstormed
+   - Surface any existing tickets that might inform the design
 2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
@@ -61,6 +64,10 @@ If the user started from a stored idea (type=idea), also update the idea's statu
     -d '{"vault_path": "IDEA_PATH", "status": "archived"}' \
     $MEMORY_API_URL/memories
   ```
+- If Linear is available, create or find a Linear project for this body of work:
+  - Search for existing project matching the design title or `LINEAR_PROJECT`
+  - If none exists, create a new project with the design title
+  - Link the spec doc path in the project description
 </HARD-GATE>
 7. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 
