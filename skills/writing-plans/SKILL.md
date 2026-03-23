@@ -146,7 +146,7 @@ After saving the plan:
 
 **Linear ticket creation:** If Linear is available (per linear-integration skill), after saving the plan:
 - Create a Linear issue for each task, status `Todo`, under the `LINEAR_PROJECT`
-- Annotate each task heading in the plan doc with the Linear issue ID (e.g., `### Task 1: Set up dashboard route [ENG-42]`)
+- Annotate each task heading in the plan doc with the Linear issue ID (e.g., `### Task 1: Set up dashboard route [UI-42]`)
 - Issues should have titles matching the task names, descriptions referencing the plan doc path
 
 **"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Ready to execute?"**

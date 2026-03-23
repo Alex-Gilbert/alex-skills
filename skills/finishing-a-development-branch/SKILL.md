@@ -106,7 +106,7 @@ EOF
 )"
 ```
 If Linear is available (per linear-integration skill) and there are associated Linear issues:
-- Add a `## Linear` section to the PR body listing the issue IDs (e.g., `Closes ENG-42, ENG-43, ENG-44`)
+- Add a `## Linear` section to the PR body listing the issue IDs (e.g., `Closes UI-42, UI-43, UI-44`)
 - Linear auto-links PRs when issue IDs appear in the PR body
 
 Then: Cleanup worktree (Step 5)

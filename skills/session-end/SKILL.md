@@ -26,7 +26,7 @@ Summarize the current conversation and store key information to memory before en
    - Bugs found
    - What's next / open items
    - Tags for the relevant projects/areas
-   - Linear tickets created or updated during this session (include issue IDs like `ENG-42`)
+   - Linear tickets created or updated during this session (include issue IDs like `UI-42`)
 
 ## Before Storing Each Item
 

@@ -43,7 +43,7 @@ curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      -d '{"vault_path": "PATH", "status": "resolved"}' \
      $MEMORY_API_URL/memories
    ```
-5. If Linear is available (per linear-integration skill) and the bug's memory content contains a Linear issue ID (`Linear: ENG-XX`):
+5. If Linear is available (per linear-integration skill) and the bug's memory content contains a Linear issue ID (`Linear: UI-XX`):
    - Move the corresponding Linear issue to `Done`
 
 ### `/bugs add <description>`
@@ -57,7 +57,7 @@ If Linear is available (per linear-integration skill), also create a correspondi
 - Use the same title and a summary of the description
 - Set label to `bug` (if the label exists in Linear)
 - Add the memory vault path to the Linear issue description: `Memory: <vault_path>`
-- Add the Linear issue ID to the memory content: `Linear: <PREFIX>-<ID>`
+- Add the Linear issue ID to the memory content: `Linear: <ISSUE-ID>` (e.g., `Linear: UI-47`)
 
 ## Output Format
 
