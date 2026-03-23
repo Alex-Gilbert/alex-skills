@@ -1,7 +1,7 @@
 ---
 name: session-end
 description: "Summarize and store session before ending. Use when user invokes /session-end or when wrapping up a conversation."
-requires_skills: [obsidian-markdown]
+requires_skills: [obsidian-markdown, linear-integration]
 ---
 
 # Session End — Summarize and Store
@@ -26,6 +26,7 @@ Summarize the current conversation and store key information to memory before en
    - Bugs found
    - What's next / open items
    - Tags for the relevant projects/areas
+   - Linear tickets created or updated during this session (include issue IDs like `ENG-42`)
 
 ## Before Storing Each Item
 
