@@ -1,6 +1,7 @@
 ---
 name: executing-plans
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
+requires_skills: [linear-integration]
 ---
 
 # Executing Plans
@@ -28,6 +29,11 @@ For each task:
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
 4. Mark as completed
+5. If Linear is available and the task has a Linear issue ID (annotated in the plan heading as `[ENG-XX]`):
+   - When picking up a task: read any comments on the Linear issue to check for teammate feedback before starting
+   - When marking as in_progress: move the Linear issue to `In Progress`
+   - When marking as completed: move the Linear issue to `Done`
+   - If a bug is discovered during the task: create a new Linear issue with label `bug` alongside storing in memory
 
 ### Step 3: Complete Development
 
