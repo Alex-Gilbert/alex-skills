@@ -64,10 +64,10 @@ If the user started from a stored idea (type=idea), also update the idea's statu
     -d '{"vault_path": "IDEA_PATH", "status": "archived"}' \
     $MEMORY_API_URL/memories
   ```
-- If Linear is available (per linear-integration skill), create or find a Linear project for this body of work:
-  - Search for existing project matching the design title or `LINEAR_PROJECT`
-  - If none exists, create a new project with the design title
-  - Link the spec doc path in the project description
+- If Linear is available (per linear-integration skill), create a Linear ticket for this body of work:
+  - If the user specified a parent ticket (e.g., "this is under UI-10"), create a sub-ticket with `parentId`
+  - Otherwise create a standalone ticket under `$LINEAR_PROJECT`
+  - Link the spec doc path in the ticket description
 </HARD-GATE>
 7. **Transition to implementation** — invoke writing-plans skill to create implementation plan
 

@@ -85,7 +85,7 @@ git merge <feature-branch>
 git branch -d <feature-branch>
 ```
 
-If Linear is available (per linear-integration skill), move all associated Linear issues to `Done`.
+If Linear is available (per linear-integration skill), move the associated Linear ticket to `Done`.
 
 Then: Cleanup worktree (Step 5)
 
@@ -105,8 +105,8 @@ gh pr create --title "<title>" --body "$(cat <<'EOF'
 EOF
 )"
 ```
-If Linear is available (per linear-integration skill) and there are associated Linear issues:
-- Add a `## Linear` section to the PR body listing the issue IDs (e.g., `Closes UI-42, UI-43, UI-44`)
+If Linear is available (per linear-integration skill) and there is an associated Linear ticket:
+- Add a `## Linear` section to the PR body with the ticket ID (e.g., `Closes UI-42`)
 - Linear auto-links PRs when issue IDs appear in the PR body
 
 Then: Cleanup worktree (Step 5)

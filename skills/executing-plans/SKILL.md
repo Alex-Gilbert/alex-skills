@@ -29,11 +29,10 @@ For each task:
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
 4. Mark as completed
-5. If Linear is available (per linear-integration skill) and the task has a Linear issue ID (annotated in the plan heading as `[UI-XX]`):
-   - When picking up a task: read any comments on the Linear issue to check for teammate feedback before starting
-   - When marking as in_progress: move the Linear issue to `In Progress`
-   - When marking as completed: move the Linear issue to `Done`
-   - If a bug is discovered during the task: create a new Linear issue with label `bug` alongside storing in memory
+5. If Linear is available (per linear-integration skill) and a Linear ticket is associated with this plan:
+   - On first task pickup: read any comments on the Linear issue for teammate feedback, then move it to `In Progress`
+   - When all tasks are completed: move the Linear issue to `Done`
+   - If a bug is discovered: create a new Linear issue with label `bug` alongside storing in memory
 
 ### Step 3: Complete Development
 

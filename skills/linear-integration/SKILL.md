@@ -49,14 +49,22 @@ When creating Linear issues:
 - **Priority:** default to `Medium` (3). Only use `Urgent` (1) or `High` (2) if the plan or user explicitly indicates urgency.
 - **Assignee:** assign to the authenticated Linear user (the developer running Claude).
 
-## Project Conventions
+## Ticket Model
 
-When brainstorming produces a new body of work:
+**One ticket per body of work, not per task.** Do not create micro-tickets for individual plan steps.
 
-1. Search Linear for an existing project matching the design title or `LINEAR_PROJECT`
-2. If no match, create a new Linear project with the design title
-3. Link the spec doc path in the project description
-4. Suggest updating `LINEAR_PROJECT` in `.claude/settings.json` if this becomes the primary project for the repo
+- `/ticket` creates a parent ticket through conversation
+- Brainstorming creates one ticket (or sub-ticket under a parent if specified)
+- Writing-plans and executing-plans work under the existing ticket — no new tickets
+- Sub-tickets use Linear's `parentId` to create hierarchy:
+
+```
+UI-10: Build user dashboard        ← parent (created via /ticket)
+  └── UI-11: Design activity feed  ← sub-ticket (created during brainstorm)
+  └── UI-12: Add filtering         ← sub-ticket (created during another brainstorm)
+```
+
+The user explicitly specifies parent relationships (e.g., "this is under UI-10"). Do not auto-detect parents.
 
 ## Cross-Referencing (Memory + Linear)
 
@@ -75,17 +83,14 @@ Do not duplicate full content between systems.
 - Surface any existing tickets to inform the design discussion
 
 ### During brainstorming (after design approval)
-- Create or find a Linear project for this body of work
-- Link the spec doc in the project description
+- Create one Linear ticket for this body of work
+- If user specified a parent (e.g., "under UI-10"), create as sub-ticket with `parentId`
+- Link the spec doc in the ticket description
 
-### During writing-plans (as tasks are defined)
-- Create a Linear issue for each plan task, status `Todo`
-- Annotate the plan doc with issue IDs (e.g., `UI-42: Set up dashboard route`)
-
-### During executing-plans (task lifecycle)
-- **Pick up task:** read any comments on the Linear issue for teammate feedback, then move to `In Progress`
-- **Complete task:** move Linear issue to `Done`
-- **Discover bug:** create new Linear issue with label `bug` + store in memory
+### During executing-plans (plan lifecycle)
+- **First task pickup:** read any comments on the ticket for teammate feedback, move to `In Progress`
+- **All tasks complete:** move the ticket to `Done`
+- **Discover bug:** create a new Linear issue with label `bug` + store in memory
 
 ### During /bugs add
 - Create a Linear issue alongside the memory bug entry
