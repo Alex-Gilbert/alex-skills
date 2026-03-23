@@ -64,7 +64,7 @@ If the user started from a stored idea (type=idea), also update the idea's statu
     -d '{"vault_path": "IDEA_PATH", "status": "archived"}' \
     $MEMORY_API_URL/memories
   ```
-- If Linear is available, create or find a Linear project for this body of work:
+- If Linear is available (per linear-integration skill), create or find a Linear project for this body of work:
   - Search for existing project matching the design title or `LINEAR_PROJECT`
   - If none exists, create a new project with the design title
   - Link the spec doc path in the project description

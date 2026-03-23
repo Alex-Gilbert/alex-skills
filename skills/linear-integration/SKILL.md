@@ -12,7 +12,7 @@ This skill is loaded automatically by workflow skills that declare `requires_ski
 Before performing ANY Linear action, check availability:
 
 1. **Check for `LINEAR_TEAM` in CLAUDE.md.** If not set, skip all Linear actions silently. Do not mention Linear, do not warn, do not suggest setup.
-2. **If env vars exist, attempt the first Linear MCP tool call.** If it fails (MCP server not connected, auth expired), note the failure internally and skip all remaining Linear actions for this session. Do not retry or prompt the user.
+2. **If the configuration is present, attempt the first Linear MCP tool call.** If it fails (MCP server not connected, auth expired), note the failure internally and skip all remaining Linear actions for this session. Do not retry or prompt the user.
 
 <IMPORTANT>
 Linear integration is OPTIONAL. When unavailable, all workflow skills must work exactly as they did before this skill existed. Never block a workflow because Linear is unavailable.

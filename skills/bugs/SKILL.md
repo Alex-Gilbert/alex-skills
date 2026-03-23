@@ -43,7 +43,7 @@ curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      -d '{"vault_path": "PATH", "status": "resolved"}' \
      $MEMORY_API_URL/memories
    ```
-5. If Linear is available and the bug's memory content contains a Linear issue ID (`Linear: ENG-XX`):
+5. If Linear is available (per linear-integration skill) and the bug's memory content contains a Linear issue ID (`Linear: ENG-XX`):
    - Move the corresponding Linear issue to `Done`
 
 ### `/bugs add <description>`

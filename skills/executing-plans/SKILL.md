@@ -29,7 +29,7 @@ For each task:
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
 4. Mark as completed
-5. If Linear is available and the task has a Linear issue ID (annotated in the plan heading as `[ENG-XX]`):
+5. If Linear is available (per linear-integration skill) and the task has a Linear issue ID (annotated in the plan heading as `[ENG-XX]`):
    - When picking up a task: read any comments on the Linear issue to check for teammate feedback before starting
    - When marking as in_progress: move the Linear issue to `In Progress`
    - When marking as completed: move the Linear issue to `Done`
