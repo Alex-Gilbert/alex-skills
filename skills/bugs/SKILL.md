@@ -1,7 +1,7 @@
 ---
 name: bugs
 description: "Bug tracking and management via semantic memory. Use when user invokes /bugs to list, filter, add, or resolve bugs."
-requires_skills: [obsidian-markdown]
+requires_skills: [obsidian-markdown, linear-integration]
 ---
 
 # Bugs — Bug Management
@@ -43,6 +43,8 @@ curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
      -d '{"vault_path": "PATH", "status": "resolved"}' \
      $MEMORY_API_URL/memories
    ```
+5. If Linear is available and the bug's memory content contains a Linear issue ID (`Linear: ENG-XX`):
+   - Move the corresponding Linear issue to `Done`
 
 ### `/bugs add <description>`
 Create a new bug, determining title, severity, and tags from the description:
@@ -51,6 +53,11 @@ curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
   -d '{"title": "TITLE", "content": "DESCRIPTION", "memory_type": "bug", "status": "open", "severity": "SEVERITY", "tags": ["TAG"]}' \
   $MEMORY_API_URL/memories
 ```
+If Linear is available (per linear-integration skill), also create a corresponding Linear issue:
+- Use the same title and a summary of the description
+- Set label to `bug` (if the label exists in Linear)
+- Add the memory vault path to the Linear issue description: `Memory: <vault_path>`
+- Add the Linear issue ID to the memory content: `Linear: <PREFIX>-<ID>`
 
 ## Output Format
 
@@ -60,3 +67,4 @@ For each bug, show:
 - **Created date**
 - **Vault path**
 - **Content preview** (first 200 chars)
+- **Linear issue** (if cross-referenced in content)
