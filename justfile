@@ -61,7 +61,7 @@ merge-skills:
     echo "Invoking Claude to reconcile ${#diverged[@]} diverged skill(s)..."
     echo ""
 
-    claude --print "You are merging upstream skill changes from obra/superpowers into the local alex-memory skills.
+    claude --print --verbose --allowedTools "Read Edit Glob Grep Bash(diff:*)" --permission-mode bypassPermissions --output-format stream-json "You are merging upstream skill changes from obra/superpowers into the local alex-memory skills.
 
     RULES:
     - The upstream version is in vendor/superpowers/skills/<name>/
@@ -75,7 +75,8 @@ merge-skills:
 
     $diff_context
 
-    For each diverged skill, read both the upstream and local versions, then edit the local version to incorporate upstream improvements while preserving local customizations. After merging, explain what you changed and why."
+    For each diverged skill, read both the upstream and local versions, then edit the local version to incorporate upstream improvements while preserving local customizations. After merging, explain what you changed and why." \
+    | jq -r 'select(.type == "assistant") | .message.content[] | select(.type == "text") | .text' 2>/dev/null
 
 # Pull and merge in one step
 sync-superpowers: pull-superpowers merge-skills
