@@ -26,12 +26,18 @@ Task tool (general-purpose):
     | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
     | Architecture | Units with clear boundaries, well-defined interfaces, independently understandable and testable |
 
-    ## CRITICAL
+    ## Calibration
+
+    **Only flag issues that would cause real problems during implementation planning.**
+    A missing section, a contradiction, or a requirement so ambiguous it could be
+    interpreted two different ways — those are issues. Minor wording improvements,
+    stylistic preferences, and "sections less detailed than others" are not.
+
+    Approve unless there are serious gaps that would lead to a flawed plan.
 
     Look especially hard for:
     - Any TODO markers or placeholder text
     - Sections saying "to be defined later" or "will spec when X is done"
-    - Sections noticeably less detailed than others
     - Units that lack clear boundaries or interfaces — can you understand what each unit does without reading its internals?
 
     ## Output Format

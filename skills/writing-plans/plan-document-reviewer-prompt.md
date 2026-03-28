@@ -27,7 +27,14 @@ Task tool (general-purpose):
     | Task Syntax | Checkbox syntax (`- [ ]`) on steps for tracking |
     | Chunk Size | Each chunk under 1000 lines |
 
-    ## CRITICAL
+    ## Calibration
+
+    **Only flag issues that would cause real problems during implementation.**
+    An implementer building the wrong thing or getting stuck is an issue.
+    Minor wording, stylistic preferences, and "nice to have" suggestions are not.
+
+    Approve unless there are serious gaps — missing requirements from the spec,
+    contradictory steps, placeholder content, or tasks so vague they can't be acted on.
 
     Look especially hard for:
     - Any TODO markers or placeholder text
