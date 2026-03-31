@@ -1,6 +1,6 @@
 ---
 name: recall
-description: "Search semantic memory for relevant context. Use when user invokes /recall, or when Claude needs prior context about decisions, bugs, patterns, or project history."
+description: "Search semantic memory for relevant context. Use when user invokes /recall."
 ---
 
 # Recall — Search Memory

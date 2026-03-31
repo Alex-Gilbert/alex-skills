@@ -1,6 +1,6 @@
 ---
 name: remember
-description: "Store information to semantic memory. Use when user invokes /remember or when Claude identifies something worth storing (bug confirmed, correction received, pattern discovered)."
+description: "Store information to semantic memory. Use when user invokes /remember."
 requires_skills: [obsidian-markdown]
 ---
 

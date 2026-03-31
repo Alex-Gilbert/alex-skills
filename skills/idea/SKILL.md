@@ -1,6 +1,6 @@
 ---
 name: idea
-description: "Quick idea capture to semantic memory. Use when user invokes /idea or expresses a raw idea worth capturing."
+description: "Quick idea capture to semantic memory. Use when user invokes /idea."
 requires_skills: [obsidian-markdown]
 ---
 

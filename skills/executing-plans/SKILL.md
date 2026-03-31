@@ -1,7 +1,6 @@
 ---
 name: executing-plans
 description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
-requires_skills: [linear-integration]
 ---
 
 # Executing Plans
@@ -29,10 +28,6 @@ For each task:
 2. Follow each step exactly (plan has bite-sized steps)
 3. Run verifications as specified
 4. Mark as completed
-5. If Linear is available (per linear-integration skill) and a Linear ticket is associated with this plan:
-   - On first task pickup: read any comments on the Linear issue for teammate feedback, then move it to `In Progress`
-   - When all tasks are completed: move the Linear issue to `Done`
-   - If a bug is discovered: create a new Linear issue with label `bug` alongside storing in memory
 
 ### Step 3: Complete Development
 
@@ -40,16 +35,6 @@ After all tasks complete and verified:
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
 - **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development-branch
 - Follow that skill to verify tests, present options, execute choice
-
-After completing the plan:
-- Store any notable outcomes or lessons learned:
-  ```bash
-  curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
-    -d '{"title": "TITLE", "content": "CONTENT", "memory_type": "pattern", "tags": ["TAG"]}' \
-    $MEMORY_API_URL/memories
-  ```
-  Use `memory_type` of `pattern` or `decision` as appropriate.
-- If bugs were discovered during execution, store them with `memory_type: "bug"`.
 
 ## When to Stop and Ask for Help
 
