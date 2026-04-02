@@ -95,6 +95,11 @@ languages = ["rust", "toml"]  # optional filter, default: all tree-sitter-suppor
 ignore = ["target/", "vendor/"]  # in addition to .gitignore
 merge_threshold = 20  # lines — chunks smaller than this get merged with siblings
 split_threshold = 200  # lines — chunks larger than this get split at child boundaries
+
+# Document ID tracking — maps file paths to EdgeQuake document IDs for deletion
+# Managed automatically by `canopy index`
+[documents]
+"src/rendering/blob.rs" = ["dc5dcdba-55b2-4e5a-9ed9-49534699459b", "63ad371a-e501-417e-8ed1-7a2d110144fb"]
 ```
 
 ### Git Hooks
@@ -148,28 +153,27 @@ Parse → classify → merge small → split large → tag.
 
 ## EdgeQuake Integration
 
-### Open Questions (Phase 0 must resolve)
+### Phase 0 Findings (Resolved)
 
-Three aspects of the EdgeQuake integration are unverified and must be prototyped before building the full CLI:
+All three open questions resolved. Full findings in `~/dev/canopy/docs/phase0-findings.md`.
 
-1. **Ingestion format**: EdgeQuake's `POST /api/v1/documents` expects file/document uploads. We need to confirm how to package tree-sitter chunks — likely as synthetic Markdown files with metadata in the body. The `edgequake-sdk` Rust crate (v0.3.0) should be used rather than raw HTTP.
+1. **Ingestion format**: `POST /api/v1/documents` accepts JSON with `content` (raw text), `title`, and `metadata` fields. Raw `reqwest` HTTP calls work well (SDK not needed for Phase 1). No special packaging required — send code as plain text.
 
-2. **Double-chunking**: EdgeQuake runs its own chunking (1200 tokens, 100 overlap) on ingested documents. Our tree-sitter chunks are typically well under this threshold (most are 20-200 lines), so they likely pass through un-split. Must verify this — if EdgeQuake re-chunks our chunks, we need to either configure its chunk size or use a lower-level API.
+2. **Double-chunking**: Not an issue. EdgeQuake's default chunk size is 1200 tokens. Tree-sitter chunks (function/struct level) are naturally well under this threshold. All test files (34-38 lines) produced `chunk_count = 1`. **Constraint for Phase 1: keep tree-sitter chunks under ~1200 tokens (~300 lines of code).**
 
-3. **Deletion by metadata**: The file-level delete-and-replace strategy requires deleting all documents from a given file path. Must verify whether EdgeQuake supports this via its API or workspace filtering. Fallback: track EdgeQuake document IDs per file in `.canopy.toml` or a local SQLite file.
+3. **Deletion**: `DELETE /api/v1/documents/{id}` works perfectly — removes chunks, entities, and relationships. **Cannot use title-based search** to find documents (list API has tenant-context issues). **Must track document IDs locally** — store `{file_path → [document_ids]}` mapping in `.canopy.toml` or a local SQLite file after each ingestion.
 
 ### Ingestion
 
-- Each chunk sent as a document to EdgeQuake via the `edgequake-sdk` Rust crate
-- Chunk metadata (file_path, language, node_kinds, line_range, parent_scope) included in the document body
-- EdgeQuake embeds, runs LLM entity extraction, builds graph edges
-- Exact packaging format to be determined during Phase 0 prototyping
+- `POST /api/v1/documents` with JSON body: `content` (raw code), `title` (e.g., `chunk::src/foo.rs::FunctionName`), `metadata` (file_path, language, node_kinds, etc.)
+- EdgeQuake embeds (nomic-embed-text), runs LLM entity extraction (qwen2.5-coder:7b), builds graph edges
+- Processing time: ~2-3 seconds per chunk with local Ollama
 
 ### Deletion
 
-- On file change: delete all documents belonging to that file path, then re-ingest new chunks
-- On file delete: delete all documents for that path
-- Deletion mechanism to be validated during Phase 0
+- On file change: look up document IDs for that file from local storage, delete each via `DELETE /api/v1/documents/{id}`, then re-ingest new chunks and store new IDs
+- On file delete: same deletion, no re-ingestion
+- Local ID storage: section in `.canopy.toml` or SQLite file in `.canopy/` directory
 
 ### Querying
 
@@ -188,9 +192,11 @@ Configured on EdgeQuake side:
 
 ### EdgeQuake + PostgreSQL
 
-- Docker Compose on archbtw using EdgeQuake's official compose file
-- PostgreSQL with AGE + pgvector extensions (pre-configured)
-- Runs alongside existing Ollama systemd service
+- Docker Compose on archbtw using EdgeQuake's official compose file (from `~/dev/edgequake/edgequake/docker/`)
+- PostgreSQL with AGE + pgvector extensions (custom Dockerfile, pre-configured)
+- EdgeQuake container runs with `--network host` (required for reliable Ollama connectivity — bridge networking has iptables issues)
+- Ollama systemd service must bind to `0.0.0.0` (not `127.0.0.1`) via `Environment="OLLAMA_HOST=0.0.0.0"`
+- Model config via env vars: `OLLAMA_MODEL=qwen2.5-coder:7b`, `EDGEQUAKE_DEFAULT_LLM_MODEL=qwen2.5-coder:7b`, `OLLAMA_EMBEDDING_MODEL=nomic-embed-text`
 
 ### Canopy CLI
 
@@ -214,14 +220,13 @@ Agent config points to `canopy mcp` as an MCP stdio server.
 
 ## Phased Build Plan
 
-### Phase 0: Prototype EdgeQuake Boundary
+### Phase 0: Prototype EdgeQuake Boundary (COMPLETE)
 
-- Deploy EdgeQuake + PostgreSQL via Docker Compose on archbtw
-- Feed a sample of Rust source files (from Atlas) through the ingestion API
-- Verify: chunks pass through without double-chunking, or find configuration to prevent it
-- Verify: documents can be deleted by file path metadata, or determine fallback
-- Verify: entity extraction on code produces useful graph structure with qwen2.5-coder
-- **Gate:** Do not proceed to Phase 1 until all three verifications pass or have confirmed workarounds
+All validations passed. See `~/dev/canopy/docs/phase0-findings.md` for details.
+- No double-chunking (chunk_count=1 for all test files)
+- Deletion by document ID works; local ID tracking required
+- Entity extraction excellent (24 entities, 17 relationships from 3 small files)
+- Graph RAG decisive (hybrid mode: detailed answers; naive mode: nothing)
 
 ### Phase 1: Indexing Pipeline
 
