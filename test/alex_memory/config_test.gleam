@@ -1,4 +1,5 @@
 import alex_memory/config
+import gleam/option.{None, Some}
 import gleeunit/should
 
 pub fn parse_config_test() {
@@ -41,6 +42,39 @@ default_author = \"alex\"
   c.indexer.chunk_max_tokens |> should.equal(512)
   c.http.port |> should.equal(7890)
   c.http.default_author |> should.equal("alex")
+  c.vikunja |> should.equal(None)
+}
+
+pub fn parse_config_with_vikunja_test() {
+  let toml = "
+[vault]
+path = \"/home/alex/alex-vault\"
+claude_dir = \"Claude\"
+
+[ollama]
+url = \"http://localhost:11434\"
+model = \"snowflake-arctic-embed:l\"
+
+[qdrant]
+url = \"http://localhost:6333\"
+collection = \"alex_memory\"
+vector_dimension = 1024
+
+[indexer]
+debounce_ms = 500
+chunk_max_tokens = 512
+
+[vikunja]
+url = \"http://localhost:3456\"
+api_token = \"test-token-123\"
+"
+
+  let assert Ok(c) = config.parse(toml)
+  c.vikunja
+  |> should.equal(Some(config.VikunjaConfig(
+    url: "http://localhost:3456",
+    api_token: "test-token-123",
+  )))
 }
 
 pub fn load_from_file_test() {

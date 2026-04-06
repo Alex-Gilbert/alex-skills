@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import simplifile
 import tom
@@ -26,6 +27,10 @@ pub type HttpConfig {
   )
 }
 
+pub type VikunjaConfig {
+  VikunjaConfig(url: String, api_token: String)
+}
+
 pub type Config {
   Config(
     vault: VaultConfig,
@@ -33,6 +38,7 @@ pub type Config {
     qdrant: QdrantConfig,
     indexer: IndexerConfig,
     http: HttpConfig,
+    vikunja: Option(VikunjaConfig),
   )
 }
 
@@ -96,6 +102,14 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
         tom.get_string(doc, ["http", "default_author"])
         |> result.unwrap("")
 
+      let vikunja = case
+        tom.get_string(doc, ["vikunja", "url"]),
+        tom.get_string(doc, ["vikunja", "api_token"])
+      {
+        Ok(url), Ok(api_token) -> Some(VikunjaConfig(url: url, api_token: api_token))
+        _, _ -> None
+      }
+
       Ok(Config(
         vault: VaultConfig(
           path: vault_path,
@@ -116,6 +130,7 @@ pub fn parse(toml_string: String) -> Result(Config, String) {
           port: http_port,
           default_author: http_default_author,
         ),
+        vikunja: vikunja,
       ))
     }
   }

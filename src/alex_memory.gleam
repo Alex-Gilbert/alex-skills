@@ -3,9 +3,11 @@ import alex_memory/indexer/embedder
 import alex_memory/indexer/vault_watcher
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
+import alex_memory/infra/vikunja_client
 import alex_memory/mcp/dashboard_writer
 import alex_memory/mcp/http_server
 import gleam/erlang/process
+import gleam/option
 import gleam/io
 
 pub fn main() {
@@ -18,8 +20,8 @@ pub fn main() {
   // Start embedder immediately (it can queue messages before infra is ready)
   let assert Ok(embedder_subject) = embedder.start(cfg)
 
-  // Start infrastructure setup in a background process
-  let _ = process.spawn(fn() { setup_infrastructure(cfg, embedder_subject) })
+  // Set up infrastructure before accepting requests
+  setup_infrastructure(cfg, embedder_subject)
 
   // Start HTTP server (fatal on failure — e.g. port conflict)
   let assert Ok(_) = http_server.start(cfg, embedder_subject)
@@ -75,6 +77,16 @@ fn setup_infrastructure(
   case dashboard_writer.regenerate(cfg.vault.path, cfg.vault.claude_dir) {
     Ok(_) -> io.println_error("Dashboards generated")
     Error(e) -> io.println_error("WARNING: Dashboard generation failed: " <> e)
+  }
+
+  // Check Vikunja if configured
+  case cfg.vikunja {
+    option.None -> io.println_error("Vikunja: not configured (skipping)")
+    option.Some(v) ->
+      case vikunja_client.health_check(v.url, v.api_token) {
+        Ok(_) -> io.println_error("Vikunja: connected at " <> v.url)
+        Error(_) -> io.println_error("WARNING: Vikunja not available at " <> v.url)
+      }
   }
 
   io.println_error("Infrastructure setup complete")

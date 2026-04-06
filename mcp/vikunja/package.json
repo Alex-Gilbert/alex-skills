@@ -1,0 +1,21 @@
+{
+  "name": "vikunja-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server for Vikunja kanban board — mirrors Linear MCP tool interface",
+  "bin": {
+    "vikunja-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "^5.8.3"
+  }
+}

@@ -9,6 +9,7 @@ import gleam/erlang/process.{type Subject}
 import gleam/http
 import gleam/http/request
 import gleam/http/response
+import gleam/int
 import gleam/io
 import gleam/json
 import gleam/list
@@ -41,6 +42,11 @@ pub fn start(
       ["memories", "reindex"], http.Post -> handle_reindex(embedder_subject)
       ["memories", ..path_rest], http.Get ->
         handle_read(config, string.join(path_rest, "/"))
+      ["projects"], http.Get -> handle_list_projects(config)
+      ["projects"], http.Post -> handle_create_project(req, config)
+      ["tasks"], http.Get -> handle_list_tasks(req, config)
+      ["tasks"], http.Post -> handle_create_task(req, config)
+      ["tasks", id], http.Patch -> handle_update_task(req, config, id)
       _, _ -> text_response(404, "not found")
     }
   }
@@ -162,6 +168,107 @@ fn handle_read(
     Ok(content) -> markdown_response(200, content)
     Error(_msg) -> text_response(404, "not found")
   }
+}
+
+// ---------- Vikunja route handlers ----------
+
+fn vikunja_or_503(
+  config: Config,
+  handler: fn(String, String) -> response.Response(mist.ResponseData),
+) -> response.Response(mist.ResponseData) {
+  case config.vikunja {
+    None ->
+      json_response(503, "{\"error\":\"Vikunja not configured\"}")
+    Some(v) -> handler(v.url, v.api_token)
+  }
+}
+
+fn handle_list_projects(
+  config: Config,
+) -> response.Response(mist.ResponseData) {
+  vikunja_or_503(config, fn(url, token) {
+    case server.handle_list_projects(url, token) {
+      Ok(toon_body) -> toon_response(200, toon_body)
+      Error(msg) -> text_response(500, msg)
+    }
+  })
+}
+
+fn handle_create_project(
+  req: request.Request(mist.Connection),
+  config: Config,
+) -> response.Response(mist.ResponseData) {
+  vikunja_or_503(config, fn(url, token) {
+    case read_json_body(req, server.decode_create_project_args()) {
+      Error(msg) -> text_response(400, msg)
+      Ok(args) ->
+        case server.handle_create_project(url, token, args) {
+          Ok(msg) -> text_response(201, msg)
+          Error(msg) -> text_response(500, msg)
+        }
+    }
+  })
+}
+
+fn handle_list_tasks(
+  req: request.Request(mist.Connection),
+  config: Config,
+) -> response.Response(mist.ResponseData) {
+  vikunja_or_503(config, fn(url, token) {
+    let query_params =
+      request.get_query(req)
+      |> result.unwrap([])
+    let project_id =
+      list.find(query_params, fn(pair) { pair.0 == "project_id" })
+      |> result.map(fn(pair) { pair.1 })
+      |> result.try(int.parse)
+    case project_id {
+      Error(_) ->
+        text_response(400, "project_id query parameter is required")
+      Ok(pid) ->
+        case server.handle_list_tasks(url, token, pid) {
+          Ok(toon_body) -> toon_response(200, toon_body)
+          Error(msg) -> text_response(500, msg)
+        }
+    }
+  })
+}
+
+fn handle_create_task(
+  req: request.Request(mist.Connection),
+  config: Config,
+) -> response.Response(mist.ResponseData) {
+  vikunja_or_503(config, fn(url, token) {
+    case read_json_body(req, server.decode_create_task_args()) {
+      Error(msg) -> text_response(400, msg)
+      Ok(args) ->
+        case server.handle_create_task(url, token, args) {
+          Ok(msg) -> text_response(201, msg)
+          Error(msg) -> text_response(500, msg)
+        }
+    }
+  })
+}
+
+fn handle_update_task(
+  req: request.Request(mist.Connection),
+  config: Config,
+  task_id_str: String,
+) -> response.Response(mist.ResponseData) {
+  vikunja_or_503(config, fn(url, token) {
+    case int.parse(task_id_str) {
+      Error(_) -> text_response(400, "Invalid task id")
+      Ok(task_id) ->
+        case read_json_body(req, server.decode_update_task_args()) {
+          Error(msg) -> text_response(400, msg)
+          Ok(args) ->
+            case server.handle_update_task(url, token, task_id, args) {
+              Ok(msg) -> text_response(200, msg)
+              Error(msg) -> text_response(500, msg)
+            }
+        }
+    }
+  })
 }
 
 // ---------- Body reading helpers ----------

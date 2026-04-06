@@ -11,6 +11,7 @@ ExecStart=/usr/bin/gleam run
 Restart=on-failure
 RestartSec=5
 Environment=HOME=/home/alex
+Environment=PATH=/home/alex/.nix-profile/bin:/usr/local/bin:/usr/bin
 
 [Install]
 WantedBy=multi-user.target
