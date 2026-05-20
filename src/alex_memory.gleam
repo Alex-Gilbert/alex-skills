@@ -3,11 +3,9 @@ import alex_memory/indexer/embedder
 import alex_memory/indexer/vault_watcher
 import alex_memory/infra/ollama_client
 import alex_memory/infra/qdrant_client
-import alex_memory/infra/vikunja_client
 import alex_memory/mcp/dashboard_writer
 import alex_memory/mcp/http_server
 import gleam/erlang/process
-import gleam/option
 import gleam/io
 
 pub fn main() {
@@ -77,16 +75,6 @@ fn setup_infrastructure(
   case dashboard_writer.regenerate(cfg.vault.path, cfg.vault.claude_dir) {
     Ok(_) -> io.println_error("Dashboards generated")
     Error(e) -> io.println_error("WARNING: Dashboard generation failed: " <> e)
-  }
-
-  // Check Vikunja if configured
-  case cfg.vikunja {
-    option.None -> io.println_error("Vikunja: not configured (skipping)")
-    option.Some(v) ->
-      case vikunja_client.health_check(v.url, v.api_token) {
-        Ok(_) -> io.println_error("Vikunja: connected at " <> v.url)
-        Error(_) -> io.println_error("WARNING: Vikunja not available at " <> v.url)
-      }
   }
 
   io.println_error("Infrastructure setup complete")
