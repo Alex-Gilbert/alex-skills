@@ -1,16 +1,16 @@
 ---
 name: ticket
-description: "Create a Linear ticket through conversation. Use when user invokes /ticket to brainstorm and create a well-formed Linear issue."
-requires_skills: [linear-integration]
+description: "Create a cliban issue through conversation. Use when user invokes /ticket to brainstorm and create a well-formed cliban issue."
+requires_skills: [cliban-workflow]
 ---
 
-# Ticket — Create a Linear Issue
+# Ticket — Create a Cliban Issue
 
-Create a well-formed Linear ticket through natural conversation. Starts quick, goes deeper if the topic warrants it.
+Create a well-formed cliban issue through natural conversation. Starts quick, goes deeper if the topic warrants it.
 
 ## Prerequisites
 
-Check `$LINEAR_TEAM` is set. If not, tell the user: "Linear integration requires `LINEAR_TEAM` in `.claude/settings.json`. See the linear-integration skill for setup."
+Cliban must be on `$PATH`. The `cliban-workflow` skill handles detection and graceful degradation.
 
 ## The Process
 
@@ -18,14 +18,17 @@ Check `$LINEAR_TEAM` is set. If not, tell the user: "Linear integration requires
 
 1. **What are you building/fixing?** — get the core idea in one sentence
 2. **What type of work is this?** — feature, bug, refactor, chore (suggest based on description)
-3. **How urgent is this?** — map to Linear priority (default Medium)
+3. **How urgent is this?** — map to cliban priority (default `medium`)
+
+Resolve the active project via the convention layer (basename match → fallback to user prompt).
 
 After these questions, draft a ticket:
 
 ```
+Project: <PROJECT-KEY>
 Title: <imperative, concise>
-Type: <feature/bug/refactor/chore>
-Priority: <Urgent/High/Medium/Low>
+Type: <feature|bug|refactor|chore>  → label
+Priority: <none|low|medium|high|urgent>
 Description: <2-3 sentences from what you've learned>
 ```
 
@@ -35,42 +38,54 @@ Ask: **"Does this capture it, or should we dig deeper?"**
 
 If the user wants more detail, ask follow-up questions **one at a time**:
 
-- What does success look like? (acceptance criteria)
+- What does success look like? (acceptance criteria — these go in the `## Spec` section)
 - What context would help someone picking this up? (background, constraints)
-- Are there dependencies or blockers?
-- Which project should this live under? (default: `$LINEAR_PROJECT`)
+- Are there dependencies or blockers? (use `--blocked-by KEY` or `--blocks KEY`)
+- Which milestone should this attach to? (use `--milestone NAME`)
 
-Update the draft with richer description and acceptance criteria.
+Update the draft with a richer description.
 
 ### Phase 3: Create the Ticket
 
-Once the user approves the draft:
+Once the user approves the draft, create the issue via stdin so the description can be multi-line:
 
-1. Create the Linear issue using the MCP tools:
-   - `team`: `$LINEAR_TEAM`
-   - `project`: `$LINEAR_PROJECT` (or as specified)
-   - `assignee`: `"me"`
-   - `state`: `Backlog` (or `Todo` if the user is starting work now)
-   - `labels`: based on work type (if the label exists in Linear)
-2. If the user specified a parent ticket (e.g., "this is under UI-10"), set `parentId`
-3. Report the created ticket ID and URL
+```bash
+cliban issue add --project <KEY> \
+  --title "<title>" \
+  --priority <priority> \
+  --label <type> \
+  [--milestone "<name>"] \
+  [--blocked-by KEY] \
+  [--blocks KEY] \
+  --description-file - --json <<'EOF'
+## Spec
+
+<description body — at least the core idea; add acceptance criteria if Phase 2 was used>
+EOF
+```
+
+If the user specified a parent (e.g., "this is under SHH-10"), add `--parent SHH-10` instead of (or in addition to) `--milestone`.
+
+Report the created key, title, and git branch name from the JSON response:
+
+```
+Created <KEY>: <title>
+Priority: <priority> | Project: <project>
+Branch: <git_branch_name>
+```
 
 ### Creating Sub-Tickets
 
-If the user says "under UI-XX" or "child of UI-XX", set the `parentId` on the new issue. This creates a sub-ticket hierarchy in Linear:
-
-```
-UI-10: Build user dashboard        ← parent
-  └── UI-11: Design activity feed  ← sub-ticket (parentId: UI-10)
-```
+If the user says "under SHH-10" or "child of SHH-10", pass `--parent SHH-10`. Cliban caps depth at 2 — if the target parent is already a sub-issue, fall back to `--related-to SHH-10` instead and explain why.
 
 ## Output
 
-After creation, show:
+After creation, show exactly:
+
 ```
-Created <ISSUE-ID>: <title>
+Created <KEY>: <title>
 Priority: <priority> | Project: <project>
-URL: <linear-url>
+Branch: <git_branch_name>
 ```
 
-If it's a sub-ticket, also show: `Parent: <PARENT-ID>`
+If it's a sub-ticket, also show: `Parent: <PARENT-KEY>`.

@@ -4,7 +4,7 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
 
-**Dispatch after:** Spec document is written to docs/superpowers/specs/
+**Dispatch after:** Spec section written to a cliban issue/milestone/project description (read with `cliban issue show <KEY> --section spec` or equivalent)
 
 ```
 Task tool (general-purpose):
@@ -12,7 +12,7 @@ Task tool (general-purpose):
   prompt: |
     You are a spec document reviewer. Verify this spec is complete and ready for planning.
 
-    **Spec to review:** [SPEC_FILE_PATH]
+    **Spec to review:** [CLIBAN_KEY] — paste the spec content directly, or have the reviewer run `cliban issue show <KEY> --section spec`
 
     ## What to Check
 
