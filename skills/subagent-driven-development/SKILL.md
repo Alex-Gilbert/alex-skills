@@ -36,6 +36,23 @@ digraph when_to_use {
 
 ## The Process
 
+### Step 0: Enforce Worktree Isolation
+
+Plan execution requires an isolated worktree — there is **no fallback to in-place work**. Before reading the plan or touching any task:
+
+1. Invoke `superpowers:using-git-worktrees`.
+2. After it returns, verify isolation actually succeeded:
+
+   ```bash
+   GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
+   GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
+   if [ "$GIT_DIR" = "$GIT_COMMON" ] && [ -z "$(git rev-parse --show-superproject-working-tree 2>/dev/null)" ]; then
+     echo "ABORT: not in a worktree" >&2; exit 1
+   fi
+   ```
+
+3. **If the check fails** (e.g., sandbox blocked `git worktree add` and the worktree skill fell back to in-place), STOP. Report the failure and ask the user to resolve permissions or use a less-restrictive sandbox before retrying. Do not proceed with the plan in the main checkout. The in-place fallback in `using-git-worktrees` is for ad-hoc work, not for executing a written plan.
+
 ### Step 1: Load Plan from Cliban
 
 1. Resolve the issue key (argument, `cliban issue current --json`, or ask user).
@@ -149,6 +166,7 @@ Adjust these to include the `cliban issue tick` / `cliban issue log` calls the s
 ## Red Flags
 
 **Never:**
+- Start implementation without a verified worktree (Step 0 — the in-place fallback in `using-git-worktrees` is for ad-hoc work, not plan execution)
 - Start implementation on `main`/`master` without explicit user consent
 - Skip reviews (spec compliance OR code quality)
 - Proceed with unfixed Critical/Important issues

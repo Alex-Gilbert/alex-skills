@@ -160,23 +160,14 @@ If you find issues, fix them inline. Re-write the description if needed.
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
+After saving the plan, announce briefly and proceed directly to subagent-driven execution — do not prompt for a choice.
 
-> **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Two execution options:**
->
-> **1. Subagent-Driven (recommended)** — I dispatch a fresh subagent per task, review between tasks, fast iteration
->
-> **2. Inline Execution** — Execute tasks in this session using executing-plans, batch execution with checkpoints
->
-> **Which approach?"**
+> **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Proceeding with subagent-driven execution."**
 
-**If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use `superpowers:subagent-driven-development`
 - Fresh subagent per task + two-stage review
 
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use `superpowers:executing-plans`
-- Batch execution with checkpoints for review
+If the user wants inline execution instead, they will say so — then use `superpowers:executing-plans`.
 
 ## Anti-Patterns
 

@@ -129,6 +129,23 @@ Check each area and report status as PASS, PARTIAL, or MISSING.
 
 *Note: Skip this section if the repo has no API endpoints.*
 
+#### 2.9 Planning Surface
+
+Cliban is the org's planning surface. The repo itself should not host planning artefacts; those live as cliban issues (`cliban issue show KEY`) and travel with the project, not the source tree.
+
+| Check | How to verify |
+|-------|--------------|
+| No in-repo `plans/` directory | `find . -type d -name plans -not -path '*/.git/*' -not -path '*/target/*' -not -path '*/node_modules/*'` returns nothing |
+| No in-repo `specs/` directory | Same search for `specs` |
+| No `docs/superpowers/` directory | Legacy from the pre-cliban workflow; should not exist |
+| No top-level `TODO.md` / `PLAN.md` / `ROADMAP.md` / `SPEC.md` | Audit/planning docs at the repo root indicate the planning surface has leaked into the tree |
+| Source comments don't link planning docs | `grep -rn 'docs/superpowers\|standard/plans\|standard/specs' <source-dirs>` returns nothing — historical pointers must be swept, not left as 404s |
+| Authoritative spec files (if any) are self-contained | A repo MAY host an authoritative reference spec (e.g. a language standard); when present, its text MUST NOT reference cliban keys, source-code paths, or external design docs. Cross-references go to other Standard sections or to formally-numbered change records. |
+
+**Rationale:** plan/design docs decay fast and rot in-tree (commits move on, the docs don't). Keeping them in cliban means each iteration of a plan replaces the prior one and the source tree only carries the resulting code + tests + spec text — what readers actually need.
+
+*Note: For repos that pre-date cliban migration, the historical artefacts may need a sweep PR (search the project's cliban backlog for "sweep dead doc-pointers" or file one).*
+
 ### Step 3: Produce Gap Report
 
 Present findings organized by area:
