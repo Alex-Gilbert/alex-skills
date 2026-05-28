@@ -164,10 +164,10 @@ After saving the plan, announce briefly and proceed directly to subagent-driven 
 
 > **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Proceeding with subagent-driven execution."**
 
-- **REQUIRED SUB-SKILL:** Use `superpowers:subagent-driven-development`
+- **REQUIRED SUB-SKILL:** Use `alex-memory:subagent-driven-development`
 - Fresh subagent per task + two-stage review
 
-If the user wants inline execution instead, they will say so — then use `superpowers:executing-plans`.
+If the user wants inline execution instead, they will say so — then use `alex-memory:executing-plans`.
 
 ## Anti-Patterns
 

@@ -2,4 +2,4 @@
 description: "Lightweight idea refinement through focused questioning"
 ---
 
-Invoke the superpowers:shape skill to shape this idea.
+Invoke the alex-memory:shape skill to shape this idea.

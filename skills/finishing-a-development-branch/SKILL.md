@@ -72,6 +72,25 @@ git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null
 
 Or ask: "This branch split from `main` — is that correct?"
 
+### Step 4.5: Offer Strict Review (Optional)
+
+For multi-task features, sprawling diffs (~200+ changed lines), or anything touching a critical module, offer an opinionated structural audit before presenting options:
+
+```
+This branch: <N> commits, <M> changed lines.
+
+Run a strict structural review before merge? (Recommended for big diffs or critical modules.)
+
+1. Yes — dispatch strict-review subagent
+2. No — proceed to options
+
+Which?
+```
+
+If yes, follow `requesting-strict-review` using `$BASE` from Step 4 and `HEAD`. Surface Critical / Important findings and Code-Judo Opportunities to the user. They should be addressed or explicitly justified before continuing to Step 5.
+
+**Skip the prompt entirely for trivial diffs** (single-file dep bumps, doc-only, under ~100 changed lines). For everything else, ask — the user can always say no.
+
 ### Step 5: Present Options
 
 **Normal repo or named-branch worktree:**

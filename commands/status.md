@@ -2,4 +2,4 @@
 description: "Project progress — list active projects or show details"
 ---
 
-Invoke the superpowers:status skill to check project status.
+Invoke the alex-memory:status skill to check project status.

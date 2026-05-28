@@ -40,7 +40,7 @@ digraph when_to_use {
 
 Plan execution requires an isolated worktree — there is **no fallback to in-place work**. Before reading the plan or touching any task:
 
-1. Invoke `superpowers:using-git-worktrees`.
+1. Invoke `alex-memory:using-git-worktrees`.
 2. After it returns, verify isolation actually succeeded:
 
    ```bash
@@ -147,7 +147,7 @@ After all tasks are done:
 After cumulative review approves:
 
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use `superpowers:finishing-a-development-branch`.
+- **REQUIRED SUB-SKILL:** Use `alex-memory:finishing-a-development-branch`.
 
 ## Model Selection
 
@@ -182,10 +182,10 @@ Adjust these to include the `cliban issue tick` / `cliban issue log` calls the s
 ## Integration
 
 **Required workflow skills:**
-- `superpowers:using-git-worktrees` — ensure isolated workspace
-- `superpowers:writing-plans` — creates the plan
-- `superpowers:requesting-code-review` — review templates
-- `superpowers:finishing-a-development-branch` — complete development
+- `alex-memory:using-git-worktrees` — ensure isolated workspace
+- `alex-memory:writing-plans` — creates the plan
+- `alex-memory:requesting-code-review` — review templates
+- `alex-memory:finishing-a-development-branch` — complete development
 
 **Subagents should use:**
-- `superpowers:test-driven-development` — TDD per task
+- `alex-memory:test-driven-development` — TDD per task
