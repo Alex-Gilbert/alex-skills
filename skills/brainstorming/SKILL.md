@@ -168,6 +168,7 @@ EOF
 - Check existing project state (recent issues, milestones, prior brainstorms via `cliban issue ls --project KEY`)
 - Search for related work: `cliban issue ls --project KEY --label <type> --json | jq 'select(.title | contains("<keyword>"))'`
 - Surface any existing tickets that touch the same area before brainstorming new work
+- **Challenge necessity as you go (ponytail attitude).** For each feature or requirement the user proposes, ask whether it needs to exist *at all* before exploring how to build it — ponytail ladder rung 1, YAGNI. Push back on speculative needs ("do you need this now, or is it for later?"). This is the cheapest place to delete scope. Embody the challenge in the dialogue; don't load the full `ponytail` persona (its terse code-first output mode clashes with brainstorming).
 
 ## Exploring Approaches
 
@@ -190,6 +191,7 @@ After drafting the design content (but before writing to cliban):
 2. **Internal consistency:** Do sections contradict? Does the architecture match the feature descriptions?
 3. **Scope check:** Focused enough for one body of work, or does it need decomposition? If issue-scoped and the spec covers multiple independent subsystems, decompose into multiple sibling issues.
 4. **Ambiguity check:** Could anything be interpreted two ways?
+5. **Reinvention check (final ponytail sweep):** Run the ponytail lens you've been applying throughout once more across the *whole* drafted spec — does each requirement still need to exist, or does stdlib / a native platform feature / an already-installed dependency already cover it? Cut or shrink anything that reinvents the wheel before the spec is written. This is the cheapest place to delete scope, and the last one before it's locked in. (Same attitude as the dialogue — no separate persona load.)
 
 Fix inline. No need to re-review — just fix and move on.
 
@@ -210,7 +212,7 @@ If they accept, read the detailed guide: `skills/brainstorming/visual-companion.
 
 - **One question at a time** — don't overwhelm
 - **Multiple choice preferred** — easier to answer
-- **YAGNI ruthlessly** — remove unnecessary features
+- **YAGNI ruthlessly** — challenge whether each feature needs to exist (ponytail rung 1) before discussing how to build it; remove unnecessary features
 - **Explore alternatives** — always 2-3 approaches
 - **Incremental validation** — present design, get approval section by section
 - **Be flexible** — go back and clarify when something doesn't make sense

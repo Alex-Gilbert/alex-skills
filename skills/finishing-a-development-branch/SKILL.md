@@ -91,6 +91,36 @@ If yes, follow `requesting-strict-review` using `$BASE` from Step 4 and `HEAD`. 
 
 **Skip the prompt entirely for trivial diffs** (single-file dep bumps, doc-only, under ~100 changed lines). For everything else, ask — the user can always say no.
 
+### Step 4.6: Surface Ponytail Debt
+
+Ponytail leaves `ponytail:` markers on deliberate shortcuts (each naming its ceiling and upgrade path). Surface the ones *this branch adds* so they merge as a conscious decision, not silent rot. Scope to the diff — the whole-repo ledger is the `ponytail-debt` skill's job, not the merge gate's:
+
+```bash
+git diff "$BASE"...HEAD | grep -nE '^\+.*ponytail:' || true
+```
+
+If any are found, list them and ask:
+
+```
+This branch adds <N> deliberate shortcuts (ponytail: markers):
+
+  <marker line — incl. its named ceiling / upgrade path>
+  ...
+
+1. Merge with these as tracked debt
+2. Address one or more first
+
+Which?
+```
+
+If the user merges, log the debt to the issue so it stays tracked (if `KEY` captured in Step 2):
+
+```bash
+cliban issue log $KEY "merged with N ponytail debt items: <short-desc>; ..."
+```
+
+**No markers found → skip silently.** Informational gate, never blocking. (For precise `file:line` or a whole-repo audit, run the `ponytail-debt` skill.)
+
 ### Step 5: Present Options
 
 **Normal repo or named-branch worktree:**
@@ -301,3 +331,4 @@ esac
 - Get typed `discard` confirmation for Option 4
 - Cleanup worktree for Options 1 & 4 only
 - Log to cliban for all four options (status change for 1/2, log-only for 3/4)
+- Surface any `ponytail:` debt the branch adds before merging

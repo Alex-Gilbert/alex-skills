@@ -42,6 +42,8 @@ For substantial multi-phase work, suggest creating sibling issues (via /ticket o
 
 Before defining tasks, map out which files in the target project repo will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
 
+**Invoke the `alex-memory:ponytail` persona to drive *how* you achieve the spec.** This is the altitude where over-engineering enters the plan: a new dependency, an abstraction with one implementation, hand-rolled logic for something stdlib or a native platform feature already does. Run the ladder on every such choice — stdlib / native / existing deps before anything new, the shortest task that works, fewest files. Keep the code footprint down. **Scope it to implementation only — do NOT re-open spec-level scope; whether each requirement should exist was settled and approved upstream in brainstorming.**
+
 - Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
 - Files that change together should live together. Split by responsibility, not by technical layer.
 - In existing codebases, follow established patterns. If a file you're modifying has grown unwieldy, including a split in the plan is reasonable — but don't propose unrelated refactoring.
@@ -155,6 +157,8 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns above. Fix them.
 
 **3. Type consistency:** Do types, signatures, and property names you used in later tasks match what you defined in earlier tasks? `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
+
+**4. Over-engineering sweep (ponytail):** Final pass of the ponytail lens from the File Structure step across the finished plan — every new abstraction, dependency, or hand-rolled task still earning its place? Favor stdlib / native / existing deps and the shortest task that works before handing off. Implementation-level only; requirements are settled (see above).
 
 If you find issues, fix them inline. Re-write the description if needed.
 
