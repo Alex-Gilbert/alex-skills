@@ -14,6 +14,8 @@ Execute a plan by dispatching a fresh subagent per task, with two-stage review a
 
 **Continuous execution:** Do not pause to check in between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are: BLOCKED status you cannot resolve, ambiguity that prevents progress, or all tasks complete.
 
+**Commit discipline (continuous ≠ uncommitted):** Land every task's work as a commit *as you go*. Commits are the only durable, reviewable record — staged-but-uncommitted work is invisible to reviewers and to whoever integrates the branch, and a subagent can end its turn with work merely staged. So: never advance past a task, come to rest, or send your final report while any task's work is staged-but-uncommitted; verify each task's commit actually landed (`git log --oneline <base>..HEAD`) before moving on; and **never commit anything after your final report** — land every commit first, *then* report. A commit that arrives after your report gets silently missed by the integrator.
+
 ## When to Use
 
 ```dot
@@ -95,6 +97,8 @@ The subagent must:
 5. Self-review
 6. Report back with status
 
+**Blocking dispatch — consume the return value, don't fire-and-forget.** Dispatch the implementer and wait for it; read the result it *returns* to you. Do NOT background-dispatch task subagents, and do NOT design a flow where a task subagent must message you back after you've moved on — a child that reports to a parent who has already advanced or finished is orphaned (the "peer no longer addressable" failure, and the source of dropped commits). One task child is live at a time; you do not advance to the next task, and you do not emit your own final report, while any dispatched child is still running or its commit is unlanded. If a child returns with work staged-but-uncommitted, YOU commit it (you have the worktree) before proceeding.
+
 #### 3b. Handle Implementer Status
 
 **DONE:** proceed to spec compliance review.
@@ -139,8 +143,9 @@ After all tasks are done:
 
 1. Dispatch a final code reviewer for the entire body of work (cumulative diff).
 2. The reviewer evaluates cross-task consistency, architectural drift, dead code, anything that slipped through per-task reviews.
-3. Report findings to user.
-4. If Critical/Important issues found, dispatch fix subagent(s).
+3. **Ponytail drift check:** the same reviewer also confirms the implementation didn't over-build *beyond* the lazy plan — no abstractions, dependencies, or flexibility the plan didn't call for. The plan was already trimmed by ponytail at write time; this verifies the executor stayed within it rather than re-trimming the plan. Have the reviewer apply the `alex-memory:ponytail-review` lens to the cumulative diff for this. One pass, cumulative — not per task.
+4. Report findings to user.
+5. If Critical/Important issues found, dispatch fix subagent(s).
 
 ### Step 5: Finishing
 
@@ -151,6 +156,9 @@ After cumulative review approves:
 
 ## Model Selection
 
+**Role tiering — keep judgment capable, make only the grind cheap.** You (the executor) coordinate, resolve conflicts, run reviews, and land commits — stay on a capable model. The per-task **implementer** subagents are where cheap models belong; the two **reviewers** (spec + quality) stay capable, since their whole job is catching what a cheap implementer got wrong. Never run the executor or the reviewers on the cheap tier to save tokens — that removes the quality recovery that makes cheap implementers safe.
+
+Per-task **implementer** model, by task shape:
 - **Mechanical tasks** (isolated functions, clear specs, 1-2 files): cheap model
 - **Integration tasks** (multi-file coordination, debugging): standard model
 - **Architecture/review tasks**: most capable available
@@ -173,11 +181,16 @@ Adjust these to include the `cliban issue tick` / `cliban issue log` calls the s
 - Dispatch multiple implementer subagents in parallel (conflicts)
 - Make a subagent read the plan from cliban directly — extract the task text once and pass it as part of the prompt (reduces subagent context cost, prevents re-reads from drifting)
 - Let a subagent edit the `## Plan` or `## Spec` structure — they can `tick`, `log`, `promote`, but NOT `edit --description`
+- Report a task or the whole plan "done" while any work is staged-but-uncommitted
+- Commit anything after your final report — land every commit first, THEN report
+- Come to rest while a dispatched subagent's task work is uncommitted or unverified — a subagent can end its turn with work merely staged, or become unaddressable mid-task; YOU land/verify the commit before advancing
+- Background-dispatch task subagents or rely on a child messaging you back — dispatch blocking and consume the returned result; a child reporting to a parent who has moved on is orphaned
 
 **Always:**
 - Pass the FULL task text in the subagent prompt (not the issue key + "read the plan")
 - Set `CLIBAN_KEY` so the subagent can call tick/log
 - Review the subagent's commits (not just its report) — commits are the ground truth
+- Verify each task's commit actually landed on the branch (`git log --oneline <base>..HEAD`) before advancing to the next task
 
 ## Integration
 

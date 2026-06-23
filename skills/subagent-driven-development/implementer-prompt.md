@@ -32,9 +32,15 @@ Task tool (general-purpose):
     1. Implement exactly what the task specifies
     2. Write tests (following TDD if task says to)
     3. Verify implementation works
-    4. Commit your work
-    5. Self-review (see below)
-    6. Report back
+    4. Self-review (see below)
+    5. Commit ALL your work — leave nothing staged-but-uncommitted
+    6. Report back — only AFTER the commit lands, and never commit again after reporting
+
+    Commits are the only durable record of your work: anything left uncommitted is
+    invisible to the reviewer and to whoever integrates the branch, and a commit that
+    arrives after your report gets silently missed. So the order is fixed: finish →
+    commit everything → verify it landed (`git status` is clean; `git log` shows it) →
+    THEN report.
 
     Work from: [directory]
 
@@ -97,10 +103,20 @@ Task tool (general-purpose):
 
     If you find issues during self-review, fix them now before reporting.
 
+    ## Commit Gate (do this before the Report Format)
+
+    Before you write a single word of your report, confirm:
+    - All work is committed: `git status` shows a clean tree (nothing staged, nothing modified).
+    - The commit(s) are on the branch: `git log --oneline` shows them at HEAD.
+
+    If anything is uncommitted, commit it now. Do NOT report "DONE" with a dirty tree,
+    and do NOT make any further commit after you report.
+
     ## Report Format
 
-    When done, report:
+    When done (and only after the Commit Gate passes), report:
     - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+    - **Final commit SHA(s)** — the tip your work lands at
     - What you implemented (or what you attempted, if blocked)
     - What you tested and test results
     - Files changed
