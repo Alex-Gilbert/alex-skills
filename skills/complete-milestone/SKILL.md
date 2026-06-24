@@ -8,11 +8,13 @@ requires_skills: [cliban-workflow]
 
 ## Overview
 
-Orchestrate every issue in a cliban milestone to completion: one agent per ticket, run in dependency order, each isolated in its own worktree, each driven through `writing-plans` then `subagent-driven-development`. The orchestrator owns branch integration and merges; agents never merge.
+Orchestrate every issue in a cliban milestone to completion: one agent per ticket, run in dependency order, each isolated in its own worktree, each driven through `alex-memory:writing-plans` then `alex-memory:subagent-driven-development`. The orchestrator owns integration and merges; agents never merge.
 
 **Core principle:** The orchestrator is a conductor, not a coder. It computes the dependency order, dispatches one agent per ticket, gates each ticket on its dependencies, and integrates finished work onto a milestone branch — never `main` — until the user finalizes.
 
 **Announce at start:** "I'm using the complete-milestone skill to orchestrate `<milestone>`."
+
+Requirement levels below: **MUST** = hard invariant; breaking it corrupts the milestone or `main`. **SHOULD** = default; override only with a stated reason. **MAY** = optional.
 
 ## When to Use
 
@@ -20,13 +22,13 @@ Orchestrate every issue in a cliban milestone to completion: one agent per ticke
 - A milestone has multiple issues with `blocked_by` relations forming an execution order
 - You want each ticket planned and implemented independently, then integrated safely
 
-**When NOT to use:** a single issue (use `writing-plans` + `subagent-driven-development` directly); issues with no shared integration target; exploratory work without a plan.
+**When NOT to use:** a single issue (use `alex-memory:writing-plans` + `alex-memory:subagent-driven-development` directly); issues with no shared integration target; exploratory work without a plan.
 
 ## The Integration Branch Rule (read first)
 
-**Ticket branches merge into a milestone integration branch, NOT `main`.**
+Ticket branches **MUST** merge into a milestone integration branch, never `main`.
 
-Merging half-finished phases straight to `main` breaks whatever currently builds from `main` — often the very tool you are using to track the work. `main` stays shippable; the milestone branch absorbs the in-progress phases; the user lands it as one atomic switch at the end via `finishing-a-development-branch`.
+Merging half-finished phases straight to `main` breaks whatever currently builds from `main` — often the very tool you are using to track the work. `main` stays shippable; the milestone branch absorbs the in-progress phases; the user lands it as one atomic switch at the end via `alex-memory:finishing-a-development-branch`.
 
 ```
 main ──────────────────────────────────────●  (untouched until final cutover)
@@ -47,7 +49,7 @@ digraph complete_milestone {
     "Per ready ticket: worktree off milestone branch + dispatch agent" [shape=box];
     "Agent: writing-plans -> subagent-driven-development -> commit on ticket branch" [shape=box];
     "Agent reports done?" [shape=diamond];
-    "Orchestrator: review + test + merge ticket->milestone branch" [shape=box];
+    "Orchestrator: verify + build + test + merge ticket->milestone branch" [shape=box];
     "Move issue to done, remove worktree, unblock dependents" [shape=box];
     "All issues done?" [shape=diamond];
     "Hand milestone branch to user (finishing-a-development-branch)" [shape=doublecircle];
@@ -58,8 +60,8 @@ digraph complete_milestone {
     "Wave has ready tickets?" -> "Per ready ticket: worktree off milestone branch + dispatch agent" [label="yes"];
     "Per ready ticket: worktree off milestone branch + dispatch agent" -> "Agent: writing-plans -> subagent-driven-development -> commit on ticket branch";
     "Agent: writing-plans -> subagent-driven-development -> commit on ticket branch" -> "Agent reports done?";
-    "Agent reports done?" -> "Orchestrator: review + test + merge ticket->milestone branch" [label="yes"];
-    "Orchestrator: review + test + merge ticket->milestone branch" -> "Move issue to done, remove worktree, unblock dependents";
+    "Agent reports done?" -> "Orchestrator: verify + build + test + merge ticket->milestone branch" [label="yes"];
+    "Orchestrator: verify + build + test + merge ticket->milestone branch" -> "Move issue to done, remove worktree, unblock dependents";
     "Move issue to done, remove worktree, unblock dependents" -> "All issues done?";
     "All issues done?" -> "Wave has ready tickets?" [label="no - next ready tickets"];
     "All issues done?" -> "Hand milestone branch to user (finishing-a-development-branch)" [label="yes"];
@@ -94,25 +96,25 @@ All ticket worktrees branch **off `milestone/$SLUG`**, not `main`.
 
 ### Step 4: Per ready ticket — worktree + one agent
 
-For each ticket in the current wave, follow `using-git-worktrees` but branch off the milestone branch:
+For each ticket in the current wave, follow `alex-memory:using-git-worktrees` but branch off the milestone branch:
 
 ```bash
 git worktree add "$ROOT/.worktrees/<ticket-branch>" -b "<ticket-branch>" "milestone/$SLUG"
 ```
 
-Use the issue's `git_branch_name` as `<ticket-branch>`. Then dispatch **one agent per ticket** (parallel within a wave; use `dispatching-parallel-agents` discipline). The agent's brief MUST:
+Use the issue's `git_branch_name` as `<ticket-branch>`. Then dispatch **one agent per ticket** (parallel within a wave). Each ticket agent **MUST** be dispatched as `general-purpose` — it has to spawn its own implementer/reviewer subagents inside `subagent-driven-development`, which tool-restricted agent types (`Explore`, `Plan`) cannot do. The agent's brief **MUST**:
 
 1. `cd` into its worktree and confirm isolation.
-2. Invoke `writing-plans` for the issue key → fills the issue's `## Plan`.
-3. Invoke `subagent-driven-development` for the same key → executes the plan task-by-task with the two-stage review it mandates. The ticket agent is the **capable executor**: it stays on a capable model and fans out **cheap** per-task implementer subagents (reviewers stay capable) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
-4. Commit all work on `<ticket-branch>`. **Do NOT merge, do NOT touch `main` or the milestone branch.**
+2. Invoke `alex-memory:writing-plans` for the issue key → fills the issue's `## Plan`.
+3. Invoke `alex-memory:subagent-driven-development` for the same key → executes the plan task-by-task with the two-stage review it mandates. The ticket agent is the **capable executor**: it stays on a capable model and fans out **cheap** per-task implementer subagents (reviewers stay capable) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
+4. Commit all work on `<ticket-branch>`. **MUST NOT** merge, touch `main`, or touch the milestone branch.
 5. Report back **only after every commit has landed** (commit-then-report; never report with staged-but-uncommitted work, never commit after reporting): final commit SHA, branch name, test status, one-line summary, and merge-risk notes.
 
-The agent runs writing-plans AND subagent-driven-development itself — the orchestrator does not pre-plan for it.
+The agent runs writing-plans AND subagent-driven-development itself — the orchestrator **MUST NOT** pre-plan for it.
 
 ### Step 5: Integrate as each agent finishes
 
-When an agent reports done, the **orchestrator** (not the agent) integrates, following `finishing-a-development-branch` Option 1 but targeting the milestone branch. **A "done" notification is a claim to verify, not a fact.**
+When an agent reports done, the **orchestrator** (not the agent) integrates, following `alex-memory:finishing-a-development-branch` Option 1 but targeting the milestone branch. A "done" notification is a claim to verify, not a fact.
 
 ```bash
 cd "$ROOT"
@@ -139,19 +141,19 @@ git branch -d "<ticket-branch>" || git branch -D "<ticket-branch>"   # -d fails 
 
 If the build or tests fail on the merge result, the ticket is not done — fix it in the orchestrator (the break is usually cross-ticket; see hazard 1) or reopen it before proceeding.
 
-**Refresh dependents:** before dispatching a ticket whose dependency just landed, its worktree must branch off the *updated* milestone branch (Step 4 already does this because the worktree is created at wave time, after upstream merges). Never create all worktrees up front.
+**Refresh dependents:** a ticket's worktree **MUST** branch off the *current* milestone branch, so create each worktree at wave time (after upstream merges), never all up front. Step 4 already does this.
 
 ### Step 6: Finalize
 
-When every issue is `done` and `milestone/$SLUG` is green, STOP and hand off to the user via `finishing-a-development-branch` (base = `main`). Landing the milestone branch on `main` is the user's call — especially when a phase is a cutover that deletes or replaces existing code.
+When every issue is `done` and `milestone/$SLUG` is green, STOP and hand off to the user via `alex-memory:finishing-a-development-branch` (base = `main`). Landing the milestone branch on `main` is the user's call — especially when a phase is a cutover that deletes or replaces existing code.
 
 ## Parallel-integration hazards
 
-Wave tickets are written against the *same* base in parallel, so they collide on whatever is shared. The orchestrator is the **serialization point for every shared resource** — and the conflicts that matter most are the ones git does NOT mark. Watch for these:
+Wave tickets are written against the *same* base in parallel, so they collide on whatever is shared. The orchestrator is the **serialization point for every shared resource** — and the conflicts that matter most are the ones git does NOT mark.
 
-**1. Clean auto-merge ≠ coherent code.** Two tickets that took divergent designs on the same files (e.g. both reworking one subsystem) auto-merge with *zero conflict markers* yet produce a tree that doesn't compile — git merged non-overlapping hunks of incompatible designs. **Build after every merge, even marker-free ones.** The compiler is the authority; git silence is not. When it breaks, the fix is usually porting an *already-merged* ticket's code onto the newer ticket's API (delegate that to a focused agent if it's deep), not reverting.
+**1. Clean auto-merge ≠ coherent code.** Two tickets that took divergent designs on the same files auto-merge with *zero conflict markers* yet produce a tree that doesn't compile — git merged non-overlapping hunks of incompatible designs. **Build after every merge, even marker-free ones.** The compiler is the authority; git silence is not. The fix is usually porting an *already-merged* ticket's code onto the newer ticket's API (delegate that to a focused agent if it's deep), not reverting.
 
-**2. Agents commit after they report.** An agent (or a sub-agent it spawned) can push a commit *after* its "done" notification / after your merge snapshot. Verify `git rev-parse <branch>` equals the merge's ticket-side parent (`HEAD^2`) before deleting the branch; cherry-pick any straggler. Put "commit everything FIRST, then send your final report — no dangling commits" in every agent brief.
+**2. Agents commit after they report.** An agent (or a sub-agent it spawned) can push a commit *after* its "done" notification / after your merge snapshot. Verify `git rev-parse <branch>` equals the merge's ticket-side parent (`HEAD^2`) before deleting the branch; cherry-pick any straggler.
 
 **3. Serialized shared sequences (changelog IDs, version files, shared enums, registries).** Every agent mints the next ID / bumps the version against the *stale* base, so they collide on merge. Pre-assigning reserved IDs in briefs helps but merge-order still wins — **the orchestrator owns the sequence and renumbers at integration time**, in merge order, keeping it gapless. Tell agents not to bump a shared version file at all (the milestone is one unreleased version until finalize).
 
@@ -161,61 +163,22 @@ Wave tickets are written against the *same* base in parallel, so they collide on
 
 **6. Finished agents re-create branches/worktrees.** An agent doing a late rebase can resurrect a branch/worktree you already cleaned up. Re-scan `git worktree list` for stragglers before finalizing; remove stale ones (`--force` if needed) — but never the *live* worktree of a still-running agent.
 
-## Quick Reference
+## Rules
 
-| Concern | Rule |
-|---|---|
-| Integration target | `milestone/<slug>`, never `main` until finalize |
-| Parallelism | One agent per ticket; whole wave in parallel |
-| Readiness | Issue ready when all `blocked_by` are `done` |
-| Who plans | The ticket's agent (writing-plans), not the orchestrator |
-| Who implements | The ticket's agent (subagent-driven-development) |
-| Who merges | The orchestrator, only — agents never merge |
-| Worktree timing | Created at wave dispatch, off current milestone branch |
-| Tests | **Build then test** on every merge result, even marker-free auto-merges; failure reopens the ticket |
-| "Done" report | A claim to verify — confirm real commits + ticked plan before integrating |
-| Shared IDs/versions | Orchestrator owns the sequence; renumber at merge, in order, gapless |
-| Branch cleanup | Verify `<branch>` == merge `HEAD^2` before delete; cherry-pick stragglers |
-| Final landing | User decides, via finishing-a-development-branch |
+The whole skill, graded. Each rule appears once.
 
-## Common Mistakes
-
-**Merging tickets to `main`** → breaks the working build mid-milestone. Always merge to the milestone branch; `main` lands once, at the end, by the user.
-
-**Creating all worktrees up front** → dependent tickets branch off stale code that lacks their dependency's work. Create each worktree at wave time, after upstream merges.
-
-**Orchestrator pre-planning the ticket** → the agent is told to run writing-plans itself. Don't hand it a finished plan; let the per-ticket plan + review checkpoints happen inside the agent.
-
-**Agent merges its own branch** → loses the orchestrator's conflict-resolution and green-tests gate. Agents commit only; the orchestrator integrates.
-
-**Ignoring the DAG and firing all agents at once** → dependents race their dependencies. Gate strictly on `blocked_by` → `done`.
-
-**Skipping tests on the merge result** → a green ticket branch can still break the milestone branch on merge. Test after every integration.
-
-**Trusting "no conflict markers" as "coherent"** → a clean auto-merge of two divergent designs compiles to nothing. Build, don't just check for markers. See Parallel-integration hazards.
-
-**Deleting a branch on the "done" report** → agents commit after reporting. Verify branch tip == merge `HEAD^2` first; cherry-pick stragglers.
-
-**Letting each agent own a shared sequence (CS-ids, version files)** → guaranteed collisions. The orchestrator assigns at merge time.
-
-## Red Flags
-
-**Never:**
-- Merge a ticket branch into `main` (only the milestone branch, until final handoff)
-- Dispatch a ticket before all its `blocked_by` issues are `done`
-- Let an agent merge, rebase onto, or push the milestone branch
-- Create a dependent's worktree before its dependency has merged
-- Mark an issue `done` when the milestone branch fails tests after its merge
-- Integrate a branch on its "done" report alone — verify real commits, a ticked plan, and tip == merge `HEAD^2`
-- Treat a marker-free auto-merge as safe without building it
-- Let agents own a shared ID/version sequence — they will collide
-
-**Always:**
-- Build the dependency DAG before dispatching anything
-- Branch ticket worktrees off the milestone branch
-- Make each agent run writing-plans then subagent-driven-development itself
-- Integrate (verify-done + merge + **build** + test + cliban move + tip-check + cleanup) as the orchestrator, per ticket
-- Own every shared sequence (changelog IDs, version files, shared enums); renumber at merge, gapless
-- Check the both-halves invariant when a path-based hook could pass on a half-done paired change
-- Brief every agent: commit everything first, THEN report — no dangling commits
-- Hand the final milestone-branch → `main` decision to the user
+| Level | Rule | What it prevents |
+|---|---|---|
+| **MUST** | Merge ticket branches into `milestone/<slug>`, never `main` until the user finalizes | Breaking the working build mid-milestone |
+| **MUST** | Build the dependency DAG first; dispatch a ticket only after all its `blocked_by` are `done` | Dependents racing their dependencies against stale code |
+| **MUST** | The orchestrator integrates; agents never merge, rebase onto, or push the milestone branch | Losing the orchestrator's conflict-resolution + green-tests gate |
+| **MUST** | Build *then* test on every merge result, even marker-free auto-merges; a failure reopens the ticket | A clean auto-merge of two divergent designs that compiles to nothing (hazard 1) |
+| **MUST** | Treat "done" as a claim: verify real commits + ticked plan + `<branch>` == merge `HEAD^2` before cleanup; cherry-pick stragglers | Integrating a half-done branch / deleting a branch whose late commits never merged (hazard 2) |
+| **MUST** | The orchestrator owns every shared sequence (changelog IDs, version files, shared enums); renumber at merge, in order, gapless | Guaranteed collisions when each agent mints against a stale base (hazard 3) |
+| **MUST** | Hand the final milestone-branch → `main` decision to the user | An agent or orchestrator silently shipping a cutover the user hasn't approved |
+| **MUST NOT** | Pre-plan a ticket for its agent — the agent runs writing-plans then subagent-driven-development itself | Losing the per-ticket plan + review checkpoints that happen inside the agent |
+| **SHOULD** | Create each worktree at wave time, off the current milestone branch | Dependent tickets branching off code that lacks their dependency's work |
+| **SHOULD** | Dispatch each ticket agent as `general-purpose` | A tool-restricted agent that cannot spawn its own implementer/reviewer subagents |
+| **SHOULD** | Brief every agent: commit everything first, THEN report — no dangling commits | The integrator silently missing a commit that arrives after the report (hazard 2) |
+| **SHOULD** | Check the both-halves invariant when a path-based hook could pass on a half-done paired change | A completeness gap a per-file hook can't catch (hazard 4) |
+| **SHOULD** | Re-scan `git worktree list` for stragglers before finalizing; never remove a live agent's worktree | A late rebase resurrecting a branch/worktree you already cleaned up (hazard 6) |
