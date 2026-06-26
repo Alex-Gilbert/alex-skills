@@ -59,6 +59,9 @@ Task tool (general-purpose):
       and note it as a concern in your report
     - In existing codebases, follow established patterns. Improve code you're touching
       the way a good developer would, but don't restructure things outside your task.
+    - NEVER write the cliban key (or any cliban issue reference) into code, comments,
+      or commit messages. It's private tracking metadata — meaningless in the repo and
+      blocked by a pre-commit hook. Record progress in cliban (tick/log), not in code.
 
     ## When You're in Over Your Head
 

@@ -176,3 +176,4 @@ Each of these runs in a single SQL transaction. Concurrent calls are serialized.
 - Don't pre-create labels — `issue add --label X` auto-creates.
 - Don't pass `--editor` in an agent context — exits 2 without a TTY.
 - Don't write spec or plan content to `docs/superpowers/specs/` or `docs/superpowers/plans/` in project repos. Those locations are deprecated under the new workflow.
+- **Never write a cliban issue key into source code, comments, commit messages, or any committed artifact.** A cliban key (e.g. `PROJ-42`) is private local tracking metadata — meaningless to anyone reading the repo. Track the work *in cliban* (`tick`/`log`); the key stays out of the code. (A global pre-commit hook enforces this and will block such commits.)
