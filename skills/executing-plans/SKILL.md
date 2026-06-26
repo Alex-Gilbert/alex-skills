@@ -120,17 +120,6 @@ After all tasks complete and verified:
 
 **Ask for clarification rather than guessing.**
 
-## Remember
-
-- Review plan critically first
-- Follow plan steps exactly
-- Don't skip verifications
-- Use `cliban issue tick` for every step — that's the source of truth for progress
-- Use `cliban issue log` for non-trivial decisions (promotions, bugs found, blockers hit)
-- Stop when blocked, don't guess
-- Never start implementation without a verified worktree (Step 0 — no in-place fallback for plan execution)
-- Never start implementation on `main`/`master` without explicit user consent
-
 ## Integration
 
 **Required workflow skills:**

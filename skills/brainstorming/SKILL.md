@@ -31,45 +31,6 @@ You MUST create a task for each of these items and complete them in order:
 9. **User reviews stored spec** before transitioning to implementation
 10. **Transition** — invoke writing-plans skill (for issue-scoped) or hand back to user (for project/milestone scoped — they'll create issues under it later)
 
-## Process Flow
-
-```dot
-digraph brainstorming {
-    "Explore project context" [shape=box];
-    "Decide scope" [shape=diamond];
-    "Create/select Project + Milestones" [shape=box];
-    "Create/select Milestone" [shape=box];
-    "Create/select Issue" [shape=box];
-    "Ask clarifying questions" [shape=box];
-    "Propose 2-3 approaches" [shape=box];
-    "Present design sections" [shape=box];
-    "User approves design?" [shape=diamond];
-    "Spec self-review" [shape=box];
-    "Write spec to cliban node" [shape=box];
-    "User reviews spec?" [shape=diamond];
-    "Invoke writing-plans (issue scope only)" [shape=doublecircle];
-    "Done (project/milestone scope)" [shape=doublecircle];
-
-    "Explore project context" -> "Decide scope";
-    "Decide scope" -> "Create/select Project + Milestones" [label="project"];
-    "Decide scope" -> "Create/select Milestone" [label="milestone"];
-    "Decide scope" -> "Create/select Issue" [label="issue"];
-    "Create/select Project + Milestones" -> "Ask clarifying questions";
-    "Create/select Milestone" -> "Ask clarifying questions";
-    "Create/select Issue" -> "Ask clarifying questions";
-    "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
-    "Present design sections" -> "User approves design?";
-    "User approves design?" -> "Present design sections" [label="no"];
-    "User approves design?" -> "Spec self-review" [label="yes"];
-    "Spec self-review" -> "Write spec to cliban node";
-    "Write spec to cliban node" -> "User reviews spec?";
-    "User reviews spec?" -> "Spec self-review" [label="changes"];
-    "User reviews spec?" -> "Invoke writing-plans (issue scope only)" [label="approved, issue scope"];
-    "User reviews spec?" -> "Done (project/milestone scope)" [label="approved, broader scope"];
-}
-```
-
 ## Deciding Scope
 
 Ask early in the conversation:

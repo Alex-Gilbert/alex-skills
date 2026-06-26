@@ -18,16 +18,7 @@ Guide completion of development work by presenting clear options, executing the 
 
 ### Step 1: Verify Tests
 
-Run the project's test suite before offering options:
-
-```bash
-# e.g. for Go projects:
-go test ./...
-# e.g. for Node:
-npm test
-# e.g. for Python:
-pytest
-```
+Run the project's test suite before offering options (detect the command from the project — `go test ./...`, `npm test`, `pytest`, etc.).
 
 **If tests fail:**
 
@@ -295,24 +286,6 @@ esac
 | 2. Create PR | - | yes | yes | - | in-review |
 | 3. Keep as-is | - | - | yes | - | (no change) |
 | 4. Discard | - | - | - | yes (force) | (no change, log only) |
-
-## Common Mistakes
-
-**Skipping test verification** → Always run tests first.
-
-**Open-ended menu** → Present exactly 4 (or 3) structured options.
-
-**Cleaning up worktree on Option 2** → Only Options 1 & 4 clean up the worktree.
-
-**Deleting branch before removing worktree** → Worktree references the branch; remove worktree first.
-
-**Running `git worktree remove` from inside the worktree** → CD to main repo root first.
-
-**Cleaning up harness-owned worktrees** → Only remove worktrees under known superpowers/.worktrees/ directories.
-
-**No confirmation for Discard** → Require typed `discard`.
-
-**Forgetting to move the cliban issue** → Every option (except 3) updates the issue. Option 3 logs but doesn't move.
 
 ## Red Flags
 
