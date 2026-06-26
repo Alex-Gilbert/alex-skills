@@ -47,19 +47,7 @@ Use for ANY technical issue:
 
 You MUST complete each phase before proceeding to the next.
 
-0. **Check memory** — Before investigating:
-   - Search for prior bugs with similar symptoms:
-     ```bash
-     curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
-       -d '{"query": "SYMPTOM_DESCRIPTION", "type": "bug"}' \
-       $MEMORY_API_URL/memories/search
-     ```
-   - Check if this was fixed before:
-     ```bash
-     curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
-       "$MEMORY_API_URL/memories?type=bug&status=resolved"
-     ```
-   If a prior resolution exists, try that fix first.
+0. **Check prior bugs** — Before investigating, invoke `alex-memory:bugs` to search resolved-bug history for similar symptoms. If a prior resolution exists, try that fix first.
 
 ### Phase 1: Root Cause Investigation
 
@@ -301,18 +289,4 @@ These techniques are part of systematic debugging and available in this director
 - **alex-memory:test-driven-development** - For creating failing test case (Phase 4, Step 1)
 - **alex-memory:verification-before-completion** - Verify fix worked before claiming success
 
-N. **Store resolution** — After the bug is fixed:
-   ```bash
-   curl -s -H "X-Author: $MEMORY_API_AUTHOR" \
-     -d '{"title": "TITLE", "content": "Symptoms: ...\nRoot cause: ...\nFix: ...\nFiles changed: ...", "memory_type": "bug", "status": "resolved", "tags": ["TAG"]}' \
-     $MEMORY_API_URL/memories
-   ```
-   Include: symptoms, root cause, fix applied, files changed
-
-## Real-World Impact
-
-From debugging sessions:
-- Systematic approach: 15-30 minutes to fix
-- Random fixes approach: 2-3 hours of thrashing
-- First-time fix rate: 95% vs 40%
-- New bugs introduced: Near zero vs common
+N. **Store resolution** — After the bug is fixed, record the resolution on the tracked cliban issue via `alex-memory:bugs`: symptoms, root cause, fix applied, files changed.

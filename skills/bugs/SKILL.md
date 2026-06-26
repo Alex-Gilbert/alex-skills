@@ -1,12 +1,12 @@
 ---
 name: bugs
-description: "Bug tracking via cliban (issues with label=bug) + optional memory entry for knowledge. Use when user invokes /bugs to list, filter, add, or resolve bugs."
-requires_skills: [obsidian-markdown, cliban-workflow]
+description: "Bug tracking via cliban (issues with label=bug). Use when user invokes /bugs to list, filter, add, or resolve bugs."
+requires_skills: [cliban-workflow]
 ---
 
 # Bugs — Bug Management
 
-Bugs are tracked as cliban issues with the `bug` label. Non-trivial bugs may also have a memory vault entry capturing the knowledge (root cause analysis, repro context). The cliban issue is the ticket; the memory file is the knowledge.
+Bugs are tracked as cliban issues with the `bug` label. The cliban issue is the ticket; root-cause analysis and repro context live in the issue's `## Spec` and `## Activity Log`.
 
 ## Subcommands
 
@@ -58,12 +58,7 @@ EOF
 echo "Created $NEW"
 ```
 
-3. **Optional — for non-trivial bugs only:** create a memory vault entry capturing the diagnostic knowledge. Use the obsidian-markdown skill for vault content conventions:
-   - Frontmatter: `type: bug`, `status: open`, `tags: [<project>, ...]`
-   - Content: full repro, root cause, hypothesis, files implicated
-   - Cross-link: include `Cliban: <NEW>` in the memory body. Include the vault path in the cliban issue description (edit the `## Spec` section to add `Memory: Claude/bugs/<path>.md` at the end).
-
-Skip the memory step for simple/obvious bugs.
+3. For non-trivial bugs, capture the diagnostic knowledge (full repro, root cause, hypothesis, files implicated) directly in the issue's `## Spec` — that's the single source of truth.
 
 ### `/bugs resolve <query>`
 
@@ -83,8 +78,6 @@ cliban issue mv <BUG-KEY> done
 cliban issue log <BUG-KEY> "resolved: <one-line reason>"
 ```
 
-4. If the bug's description references a memory vault path (`Memory: ...`), also update the memory entry's frontmatter to `status: resolved` (per obsidian-markdown conventions). This is the only knowledge-vault write — the cliban side is the source of truth for the ticket.
-
 ## Output Format
 
 For each bug, show:
@@ -92,10 +85,8 @@ For each bug, show:
 - **Priority** and **status**
 - **Project**
 - **Updated** timestamp
-- **Memory path** (if cross-referenced in description)
 
 ## Notes
 
 - Cliban auto-creates the `bug` label on first use; no setup needed.
 - Use cliban's relation flags for dependencies: `--blocks KEY` if this bug blocks another body of work; `--blocked-by KEY` if it's gated on something else.
-- The previous memory-API backend (`$MEMORY_API_URL`) is no longer used. If old bugs exist there, they're historical — new bugs flow through cliban.

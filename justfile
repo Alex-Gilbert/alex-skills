@@ -66,10 +66,10 @@ merge-skills:
     RULES:
     - The upstream version is in vendor/superpowers/skills/<name>/
     - The local version is in skills/<name>/
-    - Local customizations (memory API integration, linear integration, obsidian references, custom skills references) MUST be preserved
+    - Local customizations (cliban integration, ponytail integration, custom skills references) MUST be preserved
     - Upstream improvements (bug fixes, new features, better prompts, new files) should be incorporated
     - If a change conflicts with a local customization, keep the local customization but incorporate the spirit of the upstream change where possible
-    - Do NOT touch skills that only exist locally (bugs, idea, recall, remember, etc.)
+    - Do NOT touch skills that only exist locally (cliban, bugs, status, ticket, ponytail*, improve, etc.)
 
     Here are the diffs (--- is upstream, +++ is local):
 

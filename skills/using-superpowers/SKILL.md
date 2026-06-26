@@ -123,16 +123,13 @@ The skill itself tells you which.
 
 Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
 
-## Memory Skills
+## Cliban Skills
 
-These skills manage semantic memory across sessions:
+These skills track work and bugs via cliban (the suite's task tracker):
 
 | Skill | Purpose |
 |-------|---------|
-| `remember` | Store information to semantic memory |
-| `recall` | Search semantic memory for relevant context |
+| `cliban` | Drive the cliban CLI — projects, milestones, issues |
+| `ticket` | Create a well-formed cliban issue through conversation |
 | `bugs` | Bug tracking and management |
 | `status` | Project progress tracking |
-| `session-end` | Summarize and store session before ending |
-| `idea` | Quick idea capture to semantic memory |
-| `shape` | Lightweight idea refinement through questioning |

@@ -1,13 +1,13 @@
 {
   "name": "alex-memory-marketplace",
-  "description": "Semantic memory system + enhanced skills for Claude Code",
+  "description": "Cliban-driven workflow + a curated suite of engineering process skills for Claude Code",
   "owner": {
     "name": "Alex Gilbert"
   },
   "plugins": [
     {
       "name": "alex-memory",
-      "description": "Semantic memory system with GPU-accelerated search, Obsidian vault sync, and memory-aware skills",
+      "description": "Cliban task tracking + engineering process skills (brainstorming, planning, subagent execution, review, ponytail) for Claude Code",
       "version": "0.1.0",
       "source": "./",
       "author": {
