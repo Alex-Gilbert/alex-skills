@@ -47,7 +47,7 @@ Use for ANY technical issue:
 
 You MUST complete each phase before proceeding to the next.
 
-0. **Check prior bugs** — Before investigating, invoke `alex-memory:bugs` to search resolved-bug history for similar symptoms. If a prior resolution exists, try that fix first.
+0. **Check prior bugs** — Before investigating, invoke `alex-skills:bugs` to search resolved-bug history for similar symptoms. If a prior resolution exists, try that fix first.
 
 ### Phase 1: Root Cause Investigation
 
@@ -178,7 +178,7 @@ You MUST complete each phase before proceeding to the next.
    - Automated test if possible
    - One-off test script if no framework
    - MUST have before fixing
-   - Use the `alex-memory:test-driven-development` skill for writing proper failing tests
+   - Use the `alex-skills:test-driven-development` skill for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
@@ -286,7 +286,7 @@ These techniques are part of systematic debugging and available in this director
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
 
 **Related skills:**
-- **alex-memory:test-driven-development** - For creating failing test case (Phase 4, Step 1)
-- **alex-memory:verification-before-completion** - Verify fix worked before claiming success
+- **alex-skills:test-driven-development** - For creating failing test case (Phase 4, Step 1)
+- **alex-skills:verification-before-completion** - Verify fix worked before claiming success
 
-N. **Store resolution** — After the bug is fixed, record the resolution on the tracked cliban issue via `alex-memory:bugs`: symptoms, root cause, fix applied, files changed.
+N. **Store resolution** — After the bug is fixed, record the resolution on the tracked cliban issue via `alex-skills:bugs`: symptoms, root cause, fix applied, files changed.

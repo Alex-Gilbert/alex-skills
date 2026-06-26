@@ -42,7 +42,7 @@ For substantial multi-phase work, suggest creating sibling issues (via /ticket o
 
 Before defining tasks, map out which files in the target project repo will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
 
-**Invoke the `alex-memory:ponytail` persona to drive *how* you achieve the spec.** This is the altitude where over-engineering enters the plan: a new dependency, an abstraction with one implementation, hand-rolled logic for something stdlib or a native platform feature already does. Run the ladder on every such choice — stdlib / native / existing deps before anything new, the shortest task that works, fewest files. Keep the code footprint down. **Scope it to implementation only — do NOT re-open spec-level scope; whether each requirement should exist was settled and approved upstream in brainstorming.**
+**Invoke the `alex-skills:ponytail` persona to drive *how* you achieve the spec.** This is the altitude where over-engineering enters the plan: a new dependency, an abstraction with one implementation, hand-rolled logic for something stdlib or a native platform feature already does. Run the ladder on every such choice — stdlib / native / existing deps before anything new, the shortest task that works, fewest files. Keep the code footprint down. **Scope it to implementation only — do NOT re-open spec-level scope; whether each requirement should exist was settled and approved upstream in brainstorming.**
 
 - Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
 - Files that change together should live together. Split by responsibility, not by technical layer.
@@ -189,10 +189,10 @@ After saving the plan, announce briefly and proceed directly to subagent-driven 
 
 > **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Proceeding with subagent-driven execution."**
 
-- **REQUIRED SUB-SKILL:** Use `alex-memory:subagent-driven-development`
+- **REQUIRED SUB-SKILL:** Use `alex-skills:subagent-driven-development`
 - Fresh subagent per task + one consolidated review per `### Review Checkpoint`
 
-If the user wants inline execution instead, they will say so — then use `alex-memory:executing-plans`.
+If the user wants inline execution instead, they will say so — then use `alex-skills:executing-plans`.
 
 ## Anti-Patterns
 

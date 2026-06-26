@@ -38,7 +38,7 @@ If the repo has no working verification command (no tests, broken build), record
 
 Audit the codebase across the categories in [references/audit-playbook.md](references/audit-playbook.md) — read it now. Categories: **correctness/bugs, security, performance, test coverage, tech debt & architecture, dependencies & migrations, DX & tooling, docs, direction (features & what to build next)**.
 
-For the over-engineering slice of *tech debt & architecture* (reinvented stdlib, single-use abstractions, dependencies the platform already covers, deletable flexibility), the `alex-memory:ponytail-audit` skill is the focused specialist — its delete/stdlib/native/yagni/shrink lens complements this broad survey. Use it directly, or hand its tag taxonomy to the tech-debt subagent.
+For the over-engineering slice of *tech debt & architecture* (reinvented stdlib, single-use abstractions, dependencies the platform already covers, deletable flexibility), the `alex-skills:ponytail-audit` skill is the focused specialist — its delete/stdlib/native/yagni/shrink lens complements this broad survey. Use it directly, or hand its tag taxonomy to the tech-debt subagent.
 
 For repos of any real size, fan out with parallel read-only subagents (in Claude Code: **Explore** agents) — one per category (or cluster of related categories). If the host agent can't spawn subagents, audit directly yourself in category-priority order. **Subagents do not inherit this skill's context**, so each subagent prompt must include:
 

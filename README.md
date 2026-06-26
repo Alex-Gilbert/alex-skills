@@ -1,1 +1,1 @@
-alex-memory system
+alex-skills system

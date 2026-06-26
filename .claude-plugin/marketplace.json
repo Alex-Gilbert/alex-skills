@@ -1,12 +1,12 @@
 {
-  "name": "alex-memory-marketplace",
+  "name": "alex-skills-marketplace",
   "description": "Cliban-driven workflow + a curated suite of engineering process skills for Claude Code",
   "owner": {
     "name": "Alex Gilbert"
   },
   "plugins": [
     {
-      "name": "alex-memory",
+      "name": "alex-skills",
       "description": "Cliban task tracking + engineering process skills (brainstorming, planning, subagent execution, review, ponytail) for Claude Code",
       "version": "0.1.0",
       "source": "./",

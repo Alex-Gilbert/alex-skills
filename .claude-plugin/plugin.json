@@ -1,11 +1,11 @@
 {
-  "name": "alex-memory",
+  "name": "alex-skills",
   "description": "Cliban-driven workflow + a curated suite of engineering process skills for Claude Code",
   "version": "0.1.0",
   "author": {
     "name": "Alex Gilbert"
   },
-  "repository": "https://github.com/Alex-Gilbert/alex-memory",
+  "repository": "https://github.com/Alex-Gilbert/alex-skills",
   "license": "MIT",
   "keywords": ["skills", "cliban", "workflow", "kanban", "engineering"]
 }

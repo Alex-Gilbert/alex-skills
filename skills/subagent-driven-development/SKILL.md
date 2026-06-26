@@ -42,7 +42,7 @@ digraph when_to_use {
 
 Plan execution requires an isolated worktree — there is **no fallback to in-place work**. Before reading the plan or touching any task:
 
-1. Invoke `alex-memory:using-git-worktrees`.
+1. Invoke `alex-skills:using-git-worktrees`.
 2. After it returns, verify isolation actually succeeded:
 
    ```bash
@@ -135,7 +135,7 @@ After all tasks are done:
 
 1. Dispatch a final code reviewer for the entire body of work (cumulative diff).
 2. The reviewer evaluates cross-checkpoint consistency, architectural drift, dead code, anything that slipped between checkpoint reviews. (Lighter now — most issues were caught at checkpoints; this is the backstop.)
-3. **Ponytail drift check:** the same reviewer also confirms the implementation didn't over-build *beyond* the lazy plan — no abstractions, dependencies, or flexibility the plan didn't call for. The plan was already trimmed by ponytail at write time; this verifies the executor stayed within it rather than re-trimming the plan. Have the reviewer apply the `alex-memory:ponytail-review` lens to the cumulative diff for this. One pass, cumulative — not per task.
+3. **Ponytail drift check:** the same reviewer also confirms the implementation didn't over-build *beyond* the lazy plan — no abstractions, dependencies, or flexibility the plan didn't call for. The plan was already trimmed by ponytail at write time; this verifies the executor stayed within it rather than re-trimming the plan. Have the reviewer apply the `alex-skills:ponytail-review` lens to the cumulative diff for this. One pass, cumulative — not per task.
 4. Report findings to user.
 5. If Critical/Important issues found, dispatch fix subagent(s).
 
@@ -144,7 +144,7 @@ After all tasks are done:
 After cumulative review approves:
 
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use `alex-memory:finishing-a-development-branch`.
+- **REQUIRED SUB-SKILL:** Use `alex-skills:finishing-a-development-branch`.
 
 ## Model Selection
 
@@ -186,10 +186,10 @@ Adjust these to include the `cliban issue tick` / `cliban issue log` calls the s
 ## Integration
 
 **Required workflow skills:**
-- `alex-memory:using-git-worktrees` — ensure isolated workspace
-- `alex-memory:writing-plans` — creates the plan
-- `alex-memory:requesting-code-review` — review templates
-- `alex-memory:finishing-a-development-branch` — complete development
+- `alex-skills:using-git-worktrees` — ensure isolated workspace
+- `alex-skills:writing-plans` — creates the plan
+- `alex-skills:requesting-code-review` — review templates
+- `alex-skills:finishing-a-development-branch` — complete development
 
 **Subagents should use:**
-- `alex-memory:test-driven-development` — TDD per task
+- `alex-skills:test-driven-development` — TDD per task

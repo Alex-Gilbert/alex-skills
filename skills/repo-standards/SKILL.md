@@ -182,7 +182,7 @@ After presenting the gap report:
 
 "These are the gaps I found. Ready to brainstorm the design for addressing them?"
 
-Then invoke **alex-memory:brainstorming** to design the solution. The brainstorming session will:
+Then invoke **alex-skills:brainstorming** to design the solution. The brainstorming session will:
 1. Use the gap report as input
 2. Design the devenv setup, testing strategy, etc.
 3. Produce an ADR documenting decisions

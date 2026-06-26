@@ -1,4 +1,4 @@
-# alex-memory justfile
+# alex-skills justfile
 # Manages upstream superpowers sync and skill merging
 
 # Pull latest changes from obra/superpowers into vendor/superpowers/
@@ -61,7 +61,7 @@ merge-skills:
     echo "Invoking Claude to reconcile ${#diverged[@]} diverged skill(s)..."
     echo ""
 
-    claude --print --verbose --allowedTools "Read Edit Glob Grep Bash(diff:*)" --permission-mode bypassPermissions --output-format stream-json "You are merging upstream skill changes from obra/superpowers into the local alex-memory skills.
+    claude --print --verbose --allowedTools "Read Edit Glob Grep Bash(diff:*)" --permission-mode bypassPermissions --output-format stream-json "You are merging upstream skill changes from obra/superpowers into the local alex-skills skills.
 
     RULES:
     - The upstream version is in vendor/superpowers/skills/<name>/

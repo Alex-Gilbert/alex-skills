@@ -12,7 +12,7 @@ Load the plan from cliban, review critically, execute all tasks step-by-step, re
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**Note:** Tell your human partner that this skill works much better with subagent support. If subagents are available, prefer `alex-memory:subagent-driven-development`.
+**Note:** Tell your human partner that this skill works much better with subagent support. If subagents are available, prefer `alex-skills:subagent-driven-development`.
 
 ## The Process
 
@@ -20,7 +20,7 @@ Load the plan from cliban, review critically, execute all tasks step-by-step, re
 
 Plan execution requires an isolated worktree — there is **no fallback to in-place work**. Before reading the plan or executing any task:
 
-1. Invoke `alex-memory:using-git-worktrees`.
+1. Invoke `alex-skills:using-git-worktrees`.
 2. After it returns, verify isolation actually succeeded:
 
    ```bash
@@ -106,7 +106,7 @@ Move the original issue to `blocked` if the bug actually blocks progress, then h
 After all tasks complete and verified:
 
 - Announce: "I'm using the finishing-a-development-branch skill to complete this work."
-- **REQUIRED SUB-SKILL:** Use `alex-memory:finishing-a-development-branch`
+- **REQUIRED SUB-SKILL:** Use `alex-skills:finishing-a-development-branch`
 - That skill will handle: test verification, status transition to `in-review` or `done`, branch cleanup.
 
 ## When to Stop and Ask for Help
@@ -123,6 +123,6 @@ After all tasks complete and verified:
 ## Integration
 
 **Required workflow skills:**
-- `alex-memory:using-git-worktrees` — ensure isolated workspace
-- `alex-memory:writing-plans` — creates the plan this skill executes
-- `alex-memory:finishing-a-development-branch` — completes development after all tasks
+- `alex-skills:using-git-worktrees` — ensure isolated workspace
+- `alex-skills:writing-plans` — creates the plan this skill executes
+- `alex-skills:finishing-a-development-branch` — completes development after all tasks

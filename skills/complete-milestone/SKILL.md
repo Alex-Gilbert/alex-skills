@@ -8,7 +8,7 @@ requires_skills: [cliban-workflow]
 
 ## Overview
 
-Orchestrate every issue in a cliban milestone to completion: one agent per ticket, run in dependency order, each isolated in its own worktree, each driven through `alex-memory:writing-plans` then `alex-memory:subagent-driven-development`. The orchestrator owns integration and merges; agents never merge.
+Orchestrate every issue in a cliban milestone to completion: one agent per ticket, run in dependency order, each isolated in its own worktree, each driven through `alex-skills:writing-plans` then `alex-skills:subagent-driven-development`. The orchestrator owns integration and merges; agents never merge.
 
 **Core principle:** The orchestrator is a conductor, not a coder. It computes the dependency order, dispatches one agent per ticket, gates each ticket on its dependencies, and integrates finished work onto a milestone branch — never `main` — until the user finalizes.
 
@@ -22,13 +22,13 @@ Requirement levels below: **MUST** = hard invariant; breaking it corrupts the mi
 - A milestone has multiple issues with `blocked_by` relations forming an execution order
 - You want each ticket planned and implemented independently, then integrated safely
 
-**When NOT to use:** a single issue (use `alex-memory:writing-plans` + `alex-memory:subagent-driven-development` directly); issues with no shared integration target; exploratory work without a plan.
+**When NOT to use:** a single issue (use `alex-skills:writing-plans` + `alex-skills:subagent-driven-development` directly); issues with no shared integration target; exploratory work without a plan.
 
 ## The Integration Branch Rule (read first)
 
 Ticket branches **MUST** merge into a milestone integration branch, never `main`.
 
-Merging half-finished phases straight to `main` breaks whatever currently builds from `main` — often the very tool you are using to track the work. `main` stays shippable; the milestone branch absorbs the in-progress phases; the user lands it as one atomic switch at the end via `alex-memory:finishing-a-development-branch`.
+Merging half-finished phases straight to `main` breaks whatever currently builds from `main` — often the very tool you are using to track the work. `main` stays shippable; the milestone branch absorbs the in-progress phases; the user lands it as one atomic switch at the end via `alex-skills:finishing-a-development-branch`.
 
 ```
 main ──────────────────────────────────────●  (untouched until final cutover)
@@ -96,7 +96,7 @@ All ticket worktrees branch **off `milestone/$SLUG`**, not `main`.
 
 ### Step 4: Per ready ticket — worktree + one agent
 
-For each ticket in the current wave, follow `alex-memory:using-git-worktrees` but branch off the milestone branch:
+For each ticket in the current wave, follow `alex-skills:using-git-worktrees` but branch off the milestone branch:
 
 ```bash
 git worktree add "$ROOT/.worktrees/<ticket-branch>" -b "<ticket-branch>" "milestone/$SLUG"
@@ -105,8 +105,8 @@ git worktree add "$ROOT/.worktrees/<ticket-branch>" -b "<ticket-branch>" "milest
 Use the issue's `git_branch_name` as `<ticket-branch>`. Then dispatch **one agent per ticket** (parallel within a wave). Each ticket agent **MUST** be dispatched as `general-purpose` — it has to spawn its own implementer/reviewer subagents inside `subagent-driven-development`, which tool-restricted agent types (`Explore`, `Plan`) cannot do. The agent's brief **MUST**:
 
 1. `cd` into its worktree and confirm isolation.
-2. Invoke `alex-memory:writing-plans` for the issue key → fills the issue's `## Plan`.
-3. Invoke `alex-memory:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: it stays on a capable model and fans out **cheap** per-task implementer subagents (reviewers stay capable) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
+2. Invoke `alex-skills:writing-plans` for the issue key → fills the issue's `## Plan`.
+3. Invoke `alex-skills:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: it stays on a capable model and fans out **cheap** per-task implementer subagents (reviewers stay capable) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
 4. Commit all work on `<ticket-branch>`. **MUST NOT** merge, touch `main`, or touch the milestone branch.
 5. Report back **only after every commit has landed** (commit-then-report; never report with staged-but-uncommitted work, never commit after reporting): final commit SHA, branch name, test status, one-line summary, and merge-risk notes.
 
@@ -114,7 +114,7 @@ The agent runs writing-plans AND subagent-driven-development itself — the orch
 
 ### Step 5: Integrate as each agent finishes
 
-When an agent reports done, the **orchestrator** (not the agent) integrates, following `alex-memory:finishing-a-development-branch` Option 1 but targeting the milestone branch. A "done" notification is a claim to verify, not a fact.
+When an agent reports done, the **orchestrator** (not the agent) integrates, following `alex-skills:finishing-a-development-branch` Option 1 but targeting the milestone branch. A "done" notification is a claim to verify, not a fact.
 
 ```bash
 cd "$ROOT"
@@ -145,7 +145,7 @@ If the build or tests fail on the merge result, the ticket is not done — fix i
 
 ### Step 6: Finalize
 
-When every issue is `done` and `milestone/$SLUG` is green, STOP and hand off to the user via `alex-memory:finishing-a-development-branch` (base = `main`). Landing the milestone branch on `main` is the user's call — especially when a phase is a cutover that deletes or replaces existing code.
+When every issue is `done` and `milestone/$SLUG` is green, STOP and hand off to the user via `alex-skills:finishing-a-development-branch` (base = `main`). Landing the milestone branch on `main` is the user's call — especially when a phase is a cutover that deletes or replaces existing code.
 
 ## Parallel-integration hazards
 
