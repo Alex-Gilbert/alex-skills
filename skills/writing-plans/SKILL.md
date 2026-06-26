@@ -59,6 +59,21 @@ This structure informs the task decomposition. Each task should produce self-con
 - "Run the tests and make sure they pass" — step
 - "Commit" — step
 
+## Review Checkpoints
+
+The executor (`subagent-driven-development`) reviews at **checkpoints you place**, not after every task — per-task review is what makes tickets crawl. Mark each checkpoint with an H3 marker between task groups:
+
+```markdown
+### Review Checkpoint: <scope of the group just completed>
+```
+
+Place a checkpoint at the first of:
+- a **coherent slice** is done (a feature, a layer, a phase), **or**
+- the unreviewed group has grown **non-trivial** (several files / a few hundred lines), **or** — most important —
+- later tasks are about to **stack on a foundational** task (shared schema, core interface, auth). Put the checkpoint right after the foundation so a bug there is caught before the dependents pile on. This is the safety valve that makes batching safe; you, holding the dependency structure, are the right one to place it.
+
+Don't checkpoint after every task (defeats the purpose) or only once at the very end (a foundational bug compounds). A typical plan has a checkpoint every ~3-5 tasks or at each phase boundary. The final task group needs no trailing marker — end-of-plan is an implicit checkpoint.
+
 ## Plan Structure Inside the Issue Description
 
 The full description after writing-plans should look like:
@@ -112,9 +127,15 @@ git commit -m "feat: add specific feature"
 ### Task 2: <next component>
 
 ...
+
+### Review Checkpoint: <e.g. data layer — schema + migrations>
+
+### Task 3: <builds on the reviewed foundation>
+
+...
 ```
 
-Tasks are H3 with numbered titles. Steps are GFM checkboxes at column zero (no nested indentation as a step). The contract is binding — see the `cliban-workflow` skill.
+Tasks are H3 with numbered titles. Steps are GFM checkboxes at column zero (no nested indentation as a step). `### Review Checkpoint: <scope>` markers are H3 too but carry no steps — they tell the executor where to batch its review. The contract is binding — see the `cliban-workflow` skill.
 
 ## No Placeholders
 
@@ -169,7 +190,7 @@ After saving the plan, announce briefly and proceed directly to subagent-driven 
 > **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Proceeding with subagent-driven execution."**
 
 - **REQUIRED SUB-SKILL:** Use `alex-memory:subagent-driven-development`
-- Fresh subagent per task + two-stage review
+- Fresh subagent per task + one consolidated review per `### Review Checkpoint`
 
 If the user wants inline execution instead, they will say so — then use `alex-memory:executing-plans`.
 

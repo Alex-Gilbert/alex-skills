@@ -6,11 +6,11 @@ requires_skills: [cliban-workflow]
 
 # Subagent-Driven Development
 
-Execute a plan by dispatching a fresh subagent per task, with two-stage review after each: spec compliance review first, then code quality review. The plan lives in a cliban Issue's `## Plan` section.
+Execute a plan by dispatching a fresh subagent per task, with a consolidated **dual-verdict review at each plan-defined checkpoint** — not after every task. The plan lives in a cliban Issue's `## Plan` section and marks its own review checkpoints (placed by writing-plans at logical boundaries).
 
 **Why subagents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
 
-**Core principle:** Fresh subagent per task + two-stage review (spec then quality) = high quality, fast iteration.
+**Core principle:** Fresh subagent per task + one dual-verdict review per checkpoint (spec + quality together, over the diff since the last checkpoint) = high quality without the per-task review tax. Reviewing after every task is what slows tickets down; the plan's checkpoints batch it at the right boundaries.
 
 **Continuous execution:** Do not pause to check in between tasks. Execute all tasks from the plan without stopping. The only reasons to stop are: BLOCKED status you cannot resolve, ambiguity that prevents progress, or all tasks complete.
 
@@ -64,9 +64,11 @@ Plan execution requires an isolated worktree — there is **no fallback to in-pl
 cliban issue show <KEY> --section plan
 ```
 
-3. Extract every task with full text. The plan format is binding per the `cliban-workflow` description contract:
+3. Extract every task with full text, **and note the `### Review Checkpoint: <scope>` markers** — they sit between task groups and tell you where to review. The plan format is binding per the `cliban-workflow` description contract:
    - H3 `### Task N: <name>` headers separate tasks
+   - H3 `### Review Checkpoint: <scope>` markers separate review groups (not tasks — never dispatch an implementer for one)
    - GFM `- [ ]` / `- [x]` lines are the steps
+   - If a plan has no checkpoint markers (older plans), treat the end of the plan as the single checkpoint.
 4. Critically review for gaps or contradictions. Surface concerns to the user before dispatching.
 5. Create a TodoWrite with one todo per Task (NOT per Step — steps are bite-sized, internal to the subagent).
 
@@ -101,48 +103,38 @@ The subagent must:
 
 #### 3b. Handle Implementer Status
 
-**DONE:** proceed to spec compliance review.
-**DONE_WITH_CONCERNS:** read concerns. If about correctness/scope, address before review. Otherwise note and proceed.
+**DONE:** mark the task complete (3c) and move to the next plan item.
+**DONE_WITH_CONCERNS:** read concerns. If about correctness/scope, address before continuing. Otherwise note and proceed.
 **NEEDS_CONTEXT:** provide missing context and re-dispatch.
 **BLOCKED:** assess the blocker. Context problem → provide context and retry. Reasoning problem → re-dispatch with a more capable model. Task too big → break it down. Plan wrong → escalate to user.
 
-#### 3c. Dispatch Spec Compliance Reviewer
+There is **no independent review here** — the implementer self-reviews (3a), and independent review happens at the next checkpoint (3d). What you DO verify per task: the commit landed (`git log --oneline <base>..HEAD`) and the implementer's tests passed.
 
-Use `./spec-reviewer-prompt.md`. The reviewer:
-- Reads actual code and tests
-- Compares against the task's spec
-- Reports ✅ (compliant) or ❌ (with specific issues)
-
-If ❌: re-dispatch the implementer with the issues, then re-review.
-
-#### 3d. Dispatch Code Quality Reviewer
-
-Use `./code-quality-reviewer-prompt.md`. The reviewer evaluates:
-- Idiomatic style, naming
-- Subtle bugs, edge cases
-- Test coverage gaps
-- File organization
-
-Reports Strengths + Issues (Critical/Important/Minor) + Assessment.
-
-If Critical or Important issues → re-dispatch implementer to fix, re-review.
-
-If only Minor issues → accept and move on (note in cliban via `cliban issue log` if multiple Minors accumulate).
-
-#### 3e. Mark Task Complete + Log
+#### 3c. Mark Task Complete + Log
 
 ```bash
 cliban issue log <KEY> "Task N complete: <one-line summary>"
 ```
 
-Update TodoWrite — Task N done.
+Update TodoWrite — Task N done. Then continue to the next plan item.
+
+#### 3d. At a Review Checkpoint — Dispatch the Dual-Verdict Reviewer
+
+When the next plan item is a `### Review Checkpoint: <scope>` marker (or you've reached the end of the plan), review the whole group of tasks completed since the previous checkpoint in **one** dispatch:
+
+1. Use `./task-reviewer-prompt.md`. Set `BASE_SHA` = HEAD recorded at the previous checkpoint (branch base for the first checkpoint), `HEAD_SHA` = current HEAD. Pass the full text of every task in the group + their implementer reports.
+2. The reviewer returns **two verdicts**: spec compliance (per task) and code quality (Critical/Important/Minor over the group's diff).
+3. **Act:** any spec ❌ or any Critical/Important quality issue → re-dispatch the relevant implementer with specifics, then re-review the checkpoint. Only Minor → accept; `cliban issue log` if they accumulate.
+4. Record current HEAD as the base for the next checkpoint, then continue the loop.
+
+This is the consolidation point: N tasks cost **one** review at their checkpoint, not 2N. Checkpoints are placed in the plan (by writing-plans) at boundaries where a bug would otherwise compound — notably before later tasks stack on a foundational slice.
 
 ### Step 4: Final Cumulative Review
 
 After all tasks are done:
 
 1. Dispatch a final code reviewer for the entire body of work (cumulative diff).
-2. The reviewer evaluates cross-task consistency, architectural drift, dead code, anything that slipped through per-task reviews.
+2. The reviewer evaluates cross-checkpoint consistency, architectural drift, dead code, anything that slipped between checkpoint reviews. (Lighter now — most issues were caught at checkpoints; this is the backstop.)
 3. **Ponytail drift check:** the same reviewer also confirms the implementation didn't over-build *beyond* the lazy plan — no abstractions, dependencies, or flexibility the plan didn't call for. The plan was already trimmed by ponytail at write time; this verifies the executor stayed within it rather than re-trimming the plan. Have the reviewer apply the `alex-memory:ponytail-review` lens to the cumulative diff for this. One pass, cumulative — not per task.
 4. Report findings to user.
 5. If Critical/Important issues found, dispatch fix subagent(s).
@@ -165,9 +157,8 @@ Per-task **implementer** model, by task shape:
 
 ## Prompt Templates
 
-- `./implementer-prompt.md` — implementer subagent
-- `./spec-reviewer-prompt.md` — spec compliance reviewer subagent
-- `./code-quality-reviewer-prompt.md` — code quality reviewer subagent
+- `./implementer-prompt.md` — implementer subagent (one per task)
+- `./task-reviewer-prompt.md` — dual-verdict checkpoint reviewer (one per `### Review Checkpoint`)
 
 Adjust these to include the `cliban issue tick` / `cliban issue log` calls the subagent should make. The subagent works on a single Task at a time; it does NOT mutate the plan structure (no edits to the `## Plan` section directly — only `tick` and `log` and `promote`).
 
@@ -176,8 +167,8 @@ Adjust these to include the `cliban issue tick` / `cliban issue log` calls the s
 **Never:**
 - Start implementation without a verified worktree (Step 0 — the in-place fallback in `using-git-worktrees` is for ad-hoc work, not plan execution)
 - Start implementation on `main`/`master` without explicit user consent
-- Skip reviews (spec compliance OR code quality)
-- Proceed with unfixed Critical/Important issues
+- Skip a checkpoint review, or review each task independently instead of batching to the plan's checkpoints
+- Proceed past a checkpoint with unfixed spec ❌ or Critical/Important issues
 - Dispatch multiple implementer subagents in parallel (conflicts)
 - Make a subagent read the plan from cliban directly — extract the task text once and pass it as part of the prompt (reduces subagent context cost, prevents re-reads from drifting)
 - Let a subagent edit the `## Plan` or `## Spec` structure — they can `tick`, `log`, `promote`, but NOT `edit --description`

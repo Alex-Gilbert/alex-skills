@@ -79,6 +79,11 @@ Issue (and milestone/project) descriptions follow a strict markdown contract tha
 ### Task 2: short name
 ...
 
+### Review Checkpoint: scope of the group above
+
+### Task 3: short name
+...
+
 ## Activity Log
 
 - 2026-05-20T13:42Z — chronological entry
@@ -94,6 +99,7 @@ Binding conventions:
 1. Top-level anchors: `## Spec`, `## Plan`, `## Activity Log`, `## Notes`. Exact-match.
 2. Plan tasks: H3 `### Task <N>: <name>`. Numbered uniquely.
 3. Plan steps: GFM checkbox lines at column zero (`- [ ] ...` or `- [x] ...`). Indented child bullets are NOT steps.
+4. Review checkpoints: H3 `### Review Checkpoint: <scope>`. No steps, no number — a marker between task groups telling the executor where to batch its review. `tick`/`promote` ignore them.
 4. Promotion suffix: a step pointing to a separate issue is rewritten as `- [ ] Step 3: CSRF middleware → SHH-18`.
 5. Strict failure: structural violations exit with code 2 — fix the description and retry, no best-effort recovery.
 
