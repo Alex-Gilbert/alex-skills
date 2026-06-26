@@ -22,9 +22,9 @@ Cliban integration is REQUIRED for the new workflow but the SKILLS must still fu
 
 Cliban's primitives are:
 
-- **Project** — top-level scope. Identified by uppercase key (e.g. `SHH`, `COOK`).
+- **Project** — top-level scope. Identified by uppercase key (e.g. `ACME`, `BLOG`).
 - **Milestone** — bundle of issues. Named per project, optional target date.
-- **Issue** — body of work. Key shape: `{PROJECT}-{N}` (e.g. `SHH-12`).
+- **Issue** — body of work. Key shape: `{PROJECT}-{N}` (e.g. `PROJ-12`).
 - **Sub-issue** — depth-limited to 2. Use `--parent KEY` on `issue add`.
 - **Labels** — free-form per project (auto-created on first use).
 - **Relations** — `blocks`, `blocked_by`, `related_to` (symmetric).
@@ -100,7 +100,7 @@ Binding conventions:
 2. Plan tasks: H3 `### Task <N>: <name>`. Numbered uniquely.
 3. Plan steps: GFM checkbox lines at column zero (`- [ ] ...` or `- [x] ...`). Indented child bullets are NOT steps.
 4. Review checkpoints: H3 `### Review Checkpoint: <scope>`. No steps, no number — a marker between task groups telling the executor where to batch its review. `tick`/`promote` ignore them.
-4. Promotion suffix: a step pointing to a separate issue is rewritten as `- [ ] Step 3: CSRF middleware → SHH-18`.
+4. Promotion suffix: a step pointing to a separate issue is rewritten as `- [ ] Step 3: CSRF middleware → PROJ-18`.
 5. Strict failure: structural violations exit with code 2 — fix the description and retry, no best-effort recovery.
 
 ## Mutation Commands (atomic via SQLite)

@@ -81,7 +81,7 @@ For each issue capture `key`, `status`, and `relations` (`blocked_by` targets). 
 Topologically sort. A **wave** is the set of currently-ready, not-yet-done issues — they run in parallel. After a wave's issues land, recompute readiness; newly unblocked issues form the next wave. Announce the plan:
 
 ```
-Waves: [CLI-5] -> [CLI-6, CLI-8] -> [CLI-7] -> [CLI-9]
+Waves: [PROJ-5] -> [PROJ-6, PROJ-8] -> [PROJ-7] -> [PROJ-9]
 ```
 
 ### Step 3: Create the milestone integration branch

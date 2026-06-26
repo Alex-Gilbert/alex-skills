@@ -13,7 +13,7 @@ default no longer opens an editor; mutations are safe to run unattended.
 
 - **Statuses**: `backlog` | `in-progress` | `blocked` | `in-review` | `done`
 - **Priorities**: `none` | `low` | `medium` | `high` | `urgent`
-- **Issue keys**: `{PROJECT}-{N}` like `CLI-42` (project key is uppercase letters/digits, 2-10 chars starting with a letter).
+- **Issue keys**: `{PROJECT}-{N}` like `PROJ-42` (project key is uppercase letters/digits, 2-10 chars starting with a letter).
 - **Sub-issues**: depth limited to 2 — a sub-issue cannot have its own children. The CLI returns exit code 2 if you try to nest a third level.
 - **Relations**: `blocks`, `blocked_by` (reverse of `blocks`), `related_to` (symmetric).
 - **Labels**: free-form tags per project.
@@ -24,7 +24,7 @@ Optional refs are emitted as JSON `null` rather than omitted, so destructuring i
 
 ```json
 {
-  "key":             "CLI-42",
+  "key":             "PROJ-42",
   "title":           "...",
   "description":     "...",
   "status":          "backlog",
@@ -32,10 +32,10 @@ Optional refs are emitted as JSON `null` rather than omitted, so destructuring i
   "position":        12000.5,
   "archived":        false,
   "milestone":       "v0.1" | null,
-  "parent":          "CLI-3" | null,
+  "parent":          "PROJ-3" | null,
   "due_date":        "2026-06-01" | null,
   "labels":          ["bug", "ui"],
-  "relations":       [{"type": "blocks", "target": "CLI-9"}],
+  "relations":       [{"type": "blocks", "target": "PROJ-9"}],
   "git_branch_name": "cli-42-fix-column-ordering",
   "created_at":      "2026-...Z",
   "updated_at":      "2026-...Z"
@@ -54,7 +54,7 @@ Optional refs are emitted as JSON `null` rather than omitted, so destructuring i
 
 ### Create a project
 ```bash
-cliban project add CLI --name "Cliban" --description "kanban board"
+cliban project add PROJ --name "Cliban" --description "kanban board"
 ```
 
 ### List projects (NDJSON)
@@ -64,12 +64,12 @@ cliban project ls --json
 
 ### Capture a new issue
 ```bash
-cliban issue add --project CLI \
+cliban issue add --project PROJ \
   --title "Fix the kanban column ordering" \
   --description "When more than 5 cards exist in IN-REVIEW, positions go negative." \
   --priority high --due 2026-06-01 \
   --label bug --label ui \
-  --blocked-by CLI-3 --related-to CLI-7 \
+  --blocked-by PROJ-3 --related-to PROJ-7 \
   --json
 ```
 
@@ -79,85 +79,85 @@ cliban issue import /path/to/issues.ndjson --json
 # or stream:
 cliban issue import - < /path/to/issues.ndjson --json
 ```
-Per-line schema: `{"project":"CLI","title":"...","description":"...","status":"...","priority":"...","milestone":"...","parent":"CLI-1","labels":["a","b"]}`.
+Per-line schema: `{"project":"PROJ","title":"...","description":"...","status":"...","priority":"...","milestone":"...","parent":"PROJ-1","labels":["a","b"]}`.
 Pass `--project KEY` to set a default project for records that omit it.
 
 ### Add a sub-issue
 ```bash
-cliban issue add --project CLI --parent CLI-12 \
+cliban issue add --project PROJ --parent PROJ-12 \
   --title "Repro test" --priority medium --json
 ```
 
 ### Multi-line description
 ```bash
-cliban issue add --project CLI --title "Plan" --description-file ./plan.md
+cliban issue add --project PROJ --title "Plan" --description-file ./plan.md
 # stdin still works:
-cliban issue edit CLI-12 --description - < /tmp/desc.md
+cliban issue edit PROJ-12 --description - < /tmp/desc.md
 ```
 
 ### Move work along
 ```bash
-cliban issue mv CLI-12 in-progress
-cliban issue mv CLI-12 done
+cliban issue mv PROJ-12 in-progress
+cliban issue mv PROJ-12 done
 ```
 
 ### Set or clear a milestone
 ```bash
-cliban milestone add --project CLI --name "v0.1" --target 2026-06-01
-cliban milestone show v0.1 --project CLI --with-issues --json    # positional NAME
-cliban issue edit CLI-12 --milestone "v0.1"
-cliban issue edit CLI-12 --clear-milestone
+cliban milestone add --project PROJ --name "v0.1" --target 2026-06-01
+cliban milestone show v0.1 --project PROJ --with-issues --json    # positional NAME
+cliban issue edit PROJ-12 --milestone "v0.1"
+cliban issue edit PROJ-12 --clear-milestone
 ```
 
 ### Labels
 ```bash
-cliban label add bug --project CLI
-cliban issue edit CLI-12 --label bug --label cook-cc
-cliban issue ls --project CLI --label bug --json    # filter (all-of)
-cliban issue edit CLI-12 --remove-label cook-cc
+cliban label add bug --project PROJ
+cliban issue edit PROJ-12 --label bug --label cook-cc
+cliban issue ls --project PROJ --label bug --json    # filter (all-of)
+cliban issue edit PROJ-12 --remove-label cook-cc
 ```
 
 ### Issue relations
 ```bash
-cliban issue edit CLI-12 --blocks CLI-9
-cliban issue edit CLI-12 --blocked-by CLI-3
-cliban issue edit CLI-12 --related-to CLI-7
+cliban issue edit PROJ-12 --blocks PROJ-9
+cliban issue edit PROJ-12 --blocked-by PROJ-3
+cliban issue edit PROJ-12 --related-to PROJ-7
 
-cliban issue blocked --project CLI --json   # issues that have an open blocker
-cliban issue edit CLI-12 --remove-relation CLI-9
+cliban issue blocked --project PROJ --json   # issues that have an open blocker
+cliban issue edit PROJ-12 --remove-relation PROJ-9
 ```
 
 ### Sorting on `ls`
 ```bash
-cliban issue ls --project CLI --sort priority --json          # urgent first (default desc)
-cliban issue ls --project CLI --sort created:asc --json
-cliban issue ls --project CLI --sort updated:desc --json
-cliban issue ls --project CLI --sort position --json
+cliban issue ls --project PROJ --sort priority --json          # urgent first (default desc)
+cliban issue ls --project PROJ --sort created:asc --json
+cliban issue ls --project PROJ --sort updated:desc --json
+cliban issue ls --project PROJ --sort position --json
 ```
 
 ### Inspect a single issue
 ```bash
-cliban issue show CLI-42 --json
+cliban issue show PROJ-42 --json
 ```
 
 ### Delete (cascades sub-issues)
 ```bash
-cliban issue rm CLI-12
+cliban issue rm PROJ-12
 ```
 
 ### Archive
 ```bash
-cliban issue archive CLI-12
-cliban issue unarchive CLI-12
-cliban issue archive-done --project CLI --json
+cliban issue archive PROJ-12
+cliban issue unarchive PROJ-12
+cliban issue archive-done --project PROJ --json
 # Per-project auto-archive policy:
-cliban project edit CLI --auto-archive-done-after 7d
+cliban project edit PROJ --auto-archive-done-after 7d
 cliban issue archive-done --auto --json    # sweeps every project per its policy
 ```
 
 ### Query archived issues
 ```bash
-cliban issue ls --project CLI --archived --json
+cliban issue ls --project PROJ --archived --json
 ```
 
 ## Editor behavior (agent-safe by default)

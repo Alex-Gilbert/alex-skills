@@ -81,7 +81,7 @@ cliban issue log <BUG-KEY> "resolved: <one-line reason>"
 ## Output Format
 
 For each bug, show:
-- **Key** (e.g., `SHH-42`) and **title**
+- **Key** (e.g., `PROJ-42`) and **title**
 - **Priority** and **status**
 - **Project**
 - **Updated** timestamp

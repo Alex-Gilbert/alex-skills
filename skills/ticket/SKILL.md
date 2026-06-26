@@ -64,7 +64,7 @@ cliban issue add --project <KEY> \
 EOF
 ```
 
-If the user specified a parent (e.g., "this is under SHH-10"), add `--parent SHH-10` instead of (or in addition to) `--milestone`.
+If the user specified a parent (e.g., "this is under PROJ-10"), add `--parent PROJ-10` instead of (or in addition to) `--milestone`.
 
 Report the created key, title, and git branch name from the JSON response:
 
@@ -76,7 +76,7 @@ Branch: <git_branch_name>
 
 ### Creating Sub-Tickets
 
-If the user says "under SHH-10" or "child of SHH-10", pass `--parent SHH-10`. Cliban caps depth at 2 — if the target parent is already a sub-issue, fall back to `--related-to SHH-10` instead and explain why.
+If the user says "under PROJ-10" or "child of PROJ-10", pass `--parent PROJ-10`. Cliban caps depth at 2 — if the target parent is already a sub-issue, fall back to `--related-to PROJ-10` instead and explain why.
 
 ## Output
 

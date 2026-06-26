@@ -46,7 +46,7 @@ Branch the rest of the conversation on the answer. If unclear, the user picks �
 
 ## Scope: Project-Level
 
-1. Confirm project name/key with user (e.g., `SHH` for shh secret manager).
+1. Confirm project name/key with user (e.g., `ACME` for the acme-corp service).
 2. If new, create: `cliban project add <KEY> --name "<Name>" --description "<one-line summary>"`.
 3. Run the rest of the brainstorm (questions → approaches → design sections) to draft an architecture-level spec.
 4. After approval, write the `## Spec` (and optionally `## Notes`) to the project description:
