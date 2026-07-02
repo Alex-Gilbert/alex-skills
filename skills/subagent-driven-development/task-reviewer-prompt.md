@@ -7,6 +7,7 @@ Use this when dispatching a reviewer at a `### Review Checkpoint`. One reviewer 
 ```
 Task tool (general-purpose):
   description: "Checkpoint review: <checkpoint scope>"
+  model: fable   # review/bug-finding is fable's strongest documented gain; fall back to opus
   prompt: |
     You are reviewing a batch of completed work at a review checkpoint.
 
@@ -44,6 +45,9 @@ Task tool (general-purpose):
     - Test coverage gaps
     - File organization: does each file have one clear responsibility and a well-defined interface? Are units independently testable? Does the diff follow the plan's file structure?
     - New/grown files: did THIS change create already-large files or significantly grow existing ones? (Don't flag pre-existing sizes.)
+
+    Report every issue you find, including ones you are uncertain about or
+    consider low-severity — the severity labels do the filtering, not omission.
 
     Report: Strengths, Issues grouped Critical / Important / Minor (each with `file:line`), Assessment.
 

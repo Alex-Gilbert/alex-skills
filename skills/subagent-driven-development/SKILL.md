@@ -150,10 +150,13 @@ After cumulative review approves:
 
 **Role tiering — keep judgment capable, make only the grind cheap.** You (the executor) coordinate, resolve conflicts, run reviews, and land commits — stay on a capable model. The per-task **implementer** subagents are where cheap models belong; the two **reviewers** (spec + quality) stay capable, since their whole job is catching what a cheap implementer got wrong. Never run the executor or the reviewers on the cheap tier to save tokens — that removes the quality recovery that makes cheap implementers safe.
 
-Per-task **implementer** model, by task shape:
-- **Mechanical tasks** (isolated functions, clear specs, 1-2 files): cheap model
-- **Integration tasks** (multi-file coordination, debugging): standard model
-- **Architecture/review tasks**: most capable available
+Concrete tiers (Agent tool `model` parameter; `fable` > `opus` > `sonnet` > `haiku`):
+- **Executor (you):** inherit the session model — don't downgrade yourself.
+- **Checkpoint + final reviewers:** dispatch with `model: fable` when available (fall back to `opus`). Review and bug-finding is where fable shows its largest documented gains, and the reviewer is the quality-recovery layer for cheap implementers.
+- Per-task **implementer** model, by task shape:
+  - **Mechanical tasks** (isolated functions, clear specs, 1-2 files): `haiku` or `sonnet`
+  - **Integration tasks** (multi-file coordination, debugging): `sonnet`
+  - **Architecture-heavy tasks** (cross-cutting design, gnarly refactors): `fable` (fall back to `opus`)
 
 ## Prompt Templates
 

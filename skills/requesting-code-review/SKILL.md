@@ -33,6 +33,8 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 Use Task tool with alex-skills:code-reviewer type, fill template at `code-reviewer.md`
 
+**Model:** the agent definition pins `model: fable` (review and bug-finding are fable's strongest documented gains). Don't override it downward to save tokens — the reviewer is the quality-recovery layer; if fable is unavailable, `opus` is the floor.
+
 **Placeholders:**
 - `{WHAT_WAS_IMPLEMENTED}` - What you just built
 - `{PLAN_OR_REQUIREMENTS}` - What it should do

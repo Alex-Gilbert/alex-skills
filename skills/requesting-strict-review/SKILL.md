@@ -41,6 +41,8 @@ WORKTREE=$(git rev-parse --show-toplevel)
 - `{HEAD_SHA}` — `$HEAD_SHA`
 - `{SUMMARY}` — one-sentence description of what the branch is for
 
+Dispatch with `model: fable` when available (fall back to `opus`) — judging abstraction quality and spotting structural simplifications is exactly the high-ceiling reasoning fable is strongest at; a cheaper reviewer defeats the point of a *strict* pass.
+
 **3. Act on findings.** Strict review is more demanding than normal:
 
 - Treat Critical / Important findings as `must address or justify`, not optional

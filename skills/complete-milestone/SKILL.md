@@ -106,7 +106,7 @@ Use the issue's `git_branch_name` as `<ticket-branch>`. Then dispatch **one agen
 
 1. `cd` into its worktree and confirm isolation.
 2. Invoke `alex-skills:writing-plans` for the issue key → fills the issue's `## Plan`.
-3. Invoke `alex-skills:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: it stays on a capable model and fans out **cheap** per-task implementer subagents (reviewers stay capable) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
+3. Invoke `alex-skills:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: it stays on a capable model (`fable` when available, `opus` otherwise — ticket-level planning and multi-task coordination is long-horizon work, fable's strongest documented territory) and fans out **cheap** per-task implementer subagents (reviewers on `fable`/`opus`) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
 4. Commit all work on `<ticket-branch>`. **MUST NOT** merge, touch `main`, or touch the milestone branch.
 5. Report back **only after every commit has landed** (commit-then-report; never report with staged-but-uncommitted work, never commit after reporting): final commit SHA, branch name, test status, one-line summary, and merge-risk notes.
 
