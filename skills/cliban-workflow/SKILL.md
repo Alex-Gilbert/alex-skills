@@ -11,7 +11,7 @@ This skill is loaded automatically by workflow skills that declare `requires_ski
 
 Before performing ANY cliban action, check availability:
 
-1. **Probe `cliban version`.** If the command is not on `$PATH` (non-zero exit / "command not found"), skip all cliban actions silently for this session. Do not warn, do not suggest install, do not block the workflow.
+1. **Probe `cliban --help`.** If the command is not on `$PATH` (non-zero exit / "command not found"), skip all cliban actions silently for this session. Do not warn, do not suggest install, do not block the workflow.
 2. **If the probe succeeds, attempt the first real cliban call.** If it fails (DB missing, schema mismatch, exit 3), surface the error once with `"cliban error: <message> — try 'cliban init' or check $CLIBAN_DB"` and then skip remaining cliban actions this session. Do not retry.
 
 <IMPORTANT>
@@ -28,6 +28,32 @@ Cliban's primitives are:
 - **Sub-issue** — depth-limited to 2. Use `--parent KEY` on `issue add`.
 - **Labels** — free-form per project (auto-created on first use).
 - **Relations** — `blocks`, `blocked_by`, `related_to` (symmetric).
+- **Note** — lifecycle-free durable knowledge scoped to a project; separate from issue status and activity.
+
+## Durable Notes — Progressive Memory
+
+Cliban notes are the exclusive store for reusable lessons that should survive a ticket: repository conventions, non-obvious tool behavior, recurring hazards, and decisions whose rationale will matter again. They are not a second activity log, a status feed, or a dump of the current session.
+
+Probe note support once with `cliban note --help`. If the subcommand is unavailable, skip note search and recording for the session while continuing all project, milestone, and issue workflows normally. Missing note support means the installed CLI predates notes; it is not a database failure and must not disable cliban as a whole.
+
+At the start of non-trivial work, derive a few task-specific keywords and search project notes before planning or implementation:
+
+```bash
+cliban note search --project <KEY> "<specific terms>" --json
+cliban note show <NOTE-ID> --json
+```
+
+Read and surface only relevant hits. Do not run an unfiltered note dump, load every result into context, or add an always-loaded memory hook. Use `cliban note ls --project <KEY> --json` only for deliberate inventory work.
+
+Record a note only after discovering a durable, reusable lesson. Search before adding to avoid duplicates:
+
+```bash
+cliban note search --project <KEY> "<lesson keywords>" --json
+cliban note add --project <KEY> --title "<concise topic>" --body-file - --json
+cliban note edit <NOTE-ID> --body-file - --json
+```
+
+If an existing note covers the lesson, edit it instead of creating a near-duplicate. Use `cliban note rm <NOTE-ID>` only when knowledge is obsolete rather than merely superseded; prefer editing to preserve the current truth. Command flags may evolve with the CLI, so consult `cliban note add|show|ls|search|edit|rm --help` when needed and keep project scope plus JSON for reads.
 
 ## Status Mapping
 
@@ -71,10 +97,17 @@ Issue (and milestone/project) descriptions follow a strict markdown contract tha
 ## Plan
 
 ### Task 1: short name
-**Files:** ...
 
-- [ ] **Step 1: ...**
-- [ ] **Step 2: ...**
+**Files:** exact paths
+
+**Behaviors:** observable outcomes and edge cases
+
+**Test intent:** what must fail before implementation and what the tests prove
+
+- [ ] Add the failing behavior tests and verify the expected failure.
+- [ ] Implement the behavior within the listed boundaries.
+- [ ] Run focused and broader verification.
+- [ ] Commit the coherent change.
 
 ### Task 2: short name
 ...
@@ -91,7 +124,7 @@ Issue (and milestone/project) descriptions follow a strict markdown contract tha
 
 ## Notes
 
-[long-lived notes, mostly on project descriptions]
+[node-local context tied specifically to this issue, milestone, or project; reusable knowledge belongs in cliban notes]
 ```
 
 Binding conventions:
@@ -100,8 +133,8 @@ Binding conventions:
 2. Plan tasks: H3 `### Task <N>: <name>`. Numbered uniquely.
 3. Plan steps: GFM checkbox lines at column zero (`- [ ] ...` or `- [x] ...`). Indented child bullets are NOT steps.
 4. Review checkpoints: H3 `### Review Checkpoint: <scope>`. No steps, no number — a marker between task groups telling the executor where to batch its review. `tick`/`promote` ignore them.
-4. Promotion suffix: a step pointing to a separate issue is rewritten as `- [ ] Step 3: CSRF middleware → PROJ-18`.
-5. Strict failure: structural violations exit with code 2 — fix the description and retry, no best-effort recovery.
+5. Promotion suffix: a step pointing to a separate issue is rewritten as `- [ ] Step 3: CSRF middleware → PROJ-18`.
+6. Strict failure: structural violations exit with code 2 — fix the description and retry, no best-effort recovery.
 
 ## Mutation Commands (atomic via SQLite)
 
@@ -164,9 +197,6 @@ Each of these runs in a single SQL transaction. Concurrent calls are serialized.
 - PR opened: `cliban issue mv KEY in-review` + `cliban issue log KEY "PR opened: <url>"`
 - Local merge: `cliban issue mv KEY done`
 - Discard: `cliban issue log KEY "work discarded"` (keep current status)
-
-### Session-end
-- `cliban issue ls --updated-since <session-start> --json` → summarize as a "Cliban activity" section
 
 ## What NOT to Do
 

@@ -1,6 +1,12 @@
 # alex-skills justfile
 # Manages upstream superpowers sync and skill merging
 
+# Verify the fork-owned workflow policy and plugin manifest.
+test:
+    bash tests/fable-native-workflow.sh
+    claude plugin validate .claude-plugin/plugin.json
+    claude plugin validate .claude-plugin/marketplace.json
+
 # Pull latest changes from obra/superpowers into vendor/superpowers/
 pull-superpowers:
     git fetch superpowers

@@ -5,6 +5,16 @@ workflows for brainstorming, planning, test-driven development, debugging, code
 review, and release, wired to integrate with [cliban](https://github.com/Alex-Gilbert)
 (a self-hosted kanban/issue CLI) for issue, plan, and milestone tracking.
 
+Skills are selected by judgment rather than injected as a mandatory session-start
+policy. Explicit skill requests remain binding; otherwise the agent uses only the
+workflows that materially help the task. Substantial ambiguous work still follows
+brainstorm → behavioral plan → test-driven execution, while trivial or already
+well-specified changes can proceed directly.
+
+Cliban notes provide progressive durable memory. Agents search project-scoped notes
+for relevant lessons during non-trivial work and record only reusable knowledge;
+notes are never loaded wholesale into every session.
+
 ## Provenance
 
 This project is built on top of **[obra/superpowers](https://github.com/obra/superpowers)**

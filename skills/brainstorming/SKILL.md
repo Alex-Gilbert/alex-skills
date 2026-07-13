@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation, with the resulting spec stored in cliban."
+description: "Use when substantial or ambiguous creative work needs its intent, scope, or design resolved before implementation"
 requires_skills: [cliban-workflow]
 ---
 
@@ -8,32 +8,35 @@ requires_skills: [cliban-workflow]
 
 Help turn ideas into fully formed designs and specs through natural collaborative dialogue. The resulting spec is stored in a cliban node (project / milestone / issue) — NOT in a file under `docs/superpowers/specs/`.
 
-<HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.
-</HARD-GATE>
+<DESIGN-GATE>
+Once this skill is selected for substantial or ambiguous work, do not implement until you have presented a design and the user has approved it. The gate applies to the unresolved design, not to every code change.
+</DESIGN-GATE>
 
-## Anti-Pattern: "This Is Too Simple To Need A Design"
+## When to Skip
 
-Every project goes through this process. A todo list, a single-function utility, a config change — all of them. The design can be short (a few sentences for truly simple projects), but you MUST present it and get approval.
+Skip brainstorming and act directly when the change is trivial or already well-specified and no material design choice remains: a localized config edit, a mechanical rename, a clear bug fix, or an implementation with established project patterns. If brief inspection resolves the uncertainty, proceed; do not manufacture alternatives.
+
+Use brainstorming when choices would materially change behavior, architecture, user experience, scope, or long-term cost. An explicit user request to brainstorm also selects this skill.
 
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
 
-1. **Explore project context** — `cliban project ls --json`, recent commits, existing related issues
-2. **Decide brainstorm scope** — project-level / milestone-level / issue-level
-3. **Offer visual companion** (if topic will involve visual questions) — own message, no other content
-4. **Ask clarifying questions** — one at a time
-5. **Propose 2-3 approaches** — with trade-offs and a recommendation
-6. **Present design** — in sections scaled to complexity, get approval after each
-7. **Spec self-review** — placeholders / contradictions / ambiguity / scope
-8. **Write the spec to the cliban node** (Project description / Milestone description / Issue description)
-9. **User reviews stored spec** before transitioning to implementation
-10. **Transition** — invoke writing-plans skill (for issue-scoped) or hand back to user (for project/milestone scoped — they'll create issues under it later)
+1. **Confirm brainstorming is warranted** — substantial ambiguity or an explicit request; otherwise proceed directly
+2. **Explore project context** — `cliban project ls --json`, recent commits, existing related issues and notes
+3. **Decide brainstorm scope** — project-level / milestone-level / issue-level
+4. **Offer visual companion** (if topic will involve visual questions) — own message, no other content
+5. **Ask clarifying questions** — one at a time
+6. **Propose 2-3 approaches** — with trade-offs and a recommendation
+7. **Present design** — in sections scaled to complexity, get approval after each
+8. **Spec self-review** — placeholders / contradictions / ambiguity / scope
+9. **Write the spec to the cliban node** (Project description / Milestone description / Issue description)
+10. **User reviews stored spec** before transitioning to implementation
+11. **Transition** — invoke writing-plans skill (for issue-scoped) or hand back to user (for project/milestone scoped — they'll create issues under it later)
 
 ## Deciding Scope
 
-Ask early in the conversation:
+For a real scope ambiguity, ask early in the conversation:
 
 > "This sounds like:
 > - **Project-level** — a new product, a major architectural direction
@@ -42,26 +45,24 @@ Ask early in the conversation:
 >
 > Which fits?"
 
-Branch the rest of the conversation on the answer. If unclear, the user picks — don't auto-decide.
+Branch the rest of the conversation on the answer. Infer the scope when context makes it clear; ask only when the choice would materially change the result.
 
 ## Scope: Project-Level
 
 1. Confirm project name/key with user (e.g., `ACME` for the acme-corp service).
 2. If new, create: `cliban project add <KEY> --name "<Name>" --description "<one-line summary>"`.
 3. Run the rest of the brainstorm (questions → approaches → design sections) to draft an architecture-level spec.
-4. After approval, write the `## Spec` (and optionally `## Notes`) to the project description:
+4. After approval, write the `## Spec` to the project description:
 
 ```bash
 cliban project edit <KEY> --description-file - <<'EOF'
 ## Spec
 
 <design content with H3 subsections — architecture, vision, constraints>
-
-## Notes
-
-<longer-lived notes that outlive any single milestone>
 EOF
 ```
+
+Store any durable, reusable lessons as project-scoped `cliban note` records using the search-before-add convention, not in the project description.
 
 5. Offer to create initial milestones under the new project:
 

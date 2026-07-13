@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: "Use when you have a spec for a multi-step task, before touching code. Writes the implementation plan into the corresponding cliban issue's ## Plan section."
+description: "Use when a specced multi-step issue needs an implementation handoff before coding begins"
 requires_skills: [cliban-workflow]
 ---
 
@@ -8,194 +8,140 @@ requires_skills: [cliban-workflow]
 
 ## Overview
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+Write a concise behavioral implementation plan that gives a capable engineer the destination, boundaries, and verification strategy while leaving local implementation judgment to them. A plan is a map, not a transcript of code they should copy.
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
-
-**The plan is written into the cliban Issue's `## Plan` section** — NOT to a markdown file in `docs/superpowers/plans/`.
+Store the plan in the cliban issue's `## Plan` section, never in `docs/superpowers/plans/`.
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
 ## Inputs
 
-This skill operates on a single cliban Issue. Resolve the key in this order:
+Resolve one issue key from, in order:
 
-1. Argument passed by the invoking skill (typically the brainstorming hand-off)
-2. `cliban issue current --json` (current git branch)
-3. Ask the user
+1. The invoking skill's argument
+2. `cliban issue current --json`
+3. The user
 
-Then read the spec:
+Read the spec with `cliban issue show <KEY> --section spec`. If no `## Spec` exists, get a concise spec from the user or use brainstorming when material design choices remain.
 
-```bash
-cliban issue show <KEY> --section spec
-```
+## Scope and Context
 
-If there is no `## Spec` section, ask the user to run brainstorming first, or ask them to paste the spec content so you can populate it.
+Inspect the relevant code, tests, project commands, and related durable notes before planning. If the spec contains independent subsystems, decompose it into sibling issues rather than writing one enormous plan.
 
-## Scope Check
+Apply the ponytail lens to implementation choices: prefer stdlib, native platform features, existing dependencies, existing project patterns, and the fewest files. Do not reopen approved product scope.
 
-If the spec covers multiple independent subsystems, it should have been broken into sibling issues during brainstorming. If it wasn't, suggest stopping and decomposing — each plan should produce working, testable software on its own.
+## Plan Content
 
-For substantial multi-phase work, suggest creating sibling issues (via /ticket or by editing the milestone). Don't write a 50-task plan on one issue.
+Each task should deliver one coherent, independently understandable behavior. Include only what helps an implementer make the right change:
 
-## File Structure (in the codebase)
+- **Files:** exact files to create, modify, or test; line anchors only when stable and useful
+- **Interfaces:** signatures, schemas, commands, or wire formats when they are constraints
+- **Behaviors:** observable outcomes, edge cases, errors, and compatibility requirements
+- **Test intent:** what the tests prove and the important cases; preserve test-first ordering
+- **Commands:** focused verification and commit commands
 
-Before defining tasks, map out which files in the target project repo will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
+Use exact code only when it is truly load-bearing: a public signature, protocol shape, migration invariant, tricky algorithm, or detail where multiple plausible implementations would not be equivalent. Otherwise describe behavior and let the implementer work with the repository.
 
-**Invoke the `alex-skills:ponytail` persona to drive *how* you achieve the spec.** This is the altitude where over-engineering enters the plan: a new dependency, an abstraction with one implementation, hand-rolled logic for something stdlib or a native platform feature already does. Run the ladder on every such choice — stdlib / native / existing deps before anything new, the shortest task that works, fewest files. Keep the code footprint down. **Scope it to implementation only — do NOT re-open spec-level scope; whether each requirement should exist was settled and approved upstream in brainstorming.**
+Tasks should be sized as coherent changes, not decomposed into minutes or one checkbox per keystroke. For every behavior change, preserve this test-first sequence:
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, follow established patterns. If a file you're modifying has grown unwieldy, including a split in the plan is reasonable — but don't propose unrelated refactoring.
+- [ ] Add a failing test for the specified behavior and run it to confirm the expected failure.
+- [ ] Implement the behavior using the listed files and constraints.
+- [ ] Run focused verification, then the relevant broader suite.
+- [ ] Commit the coherent change.
 
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
-
-## Bite-Sized Task Granularity
-
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" — step
-- "Run it to make sure it fails" — step
-- "Implement the minimal code to make the test pass" — step
-- "Run the tests and make sure they pass" — step
-- "Commit" — step
+Name concrete test cases and expected outcomes, but do not pre-write routine test or implementation bodies.
 
 ## Review Checkpoints
 
-The executor (`subagent-driven-development`) reviews at **checkpoints you place**, not after every task — per-task review is what makes tickets crawl. Mark each checkpoint with an H3 marker between task groups:
+The executor (`subagent-driven-development`) reviews at checkpoints, not after every task. Insert this H3 marker between task groups:
 
 ```markdown
-### Review Checkpoint: <scope of the group just completed>
+### Review Checkpoint: <scope of completed group>
 ```
 
 Place a checkpoint at the first of:
-- a **coherent slice** is done (a feature, a layer, a phase), **or**
-- the unreviewed group has grown **non-trivial** (several files / a few hundred lines), **or** — most important —
-- later tasks are about to **stack on a foundational** task (shared schema, core interface, auth). Put the checkpoint right after the foundation so a bug there is caught before the dependents pile on. This is the safety valve that makes batching safe; you, holding the dependency structure, are the right one to place it.
 
-Don't checkpoint after every task (defeats the purpose) or only once at the very end (a foundational bug compounds). A typical plan has a checkpoint every ~3-5 tasks or at each phase boundary. The final task group needs no trailing marker — end-of-plan is an implicit checkpoint.
+- a coherent feature, layer, or phase is complete;
+- the unreviewed group spans several files or a few hundred lines; or
+- later tasks will stack on a foundational schema, interface, or security decision.
 
-## Plan Structure Inside the Issue Description
+Do not checkpoint every task or wait until the entire plan is complete. A typical plan has one every 3–5 tasks or at phase boundaries. The end of the plan is an implicit checkpoint.
 
-The full description after writing-plans should look like:
+## Cliban Format
 
 ```markdown
 ## Spec
 
-<existing spec content from brainstorming>
+<existing approved spec>
 
 ## Plan
 
-### Task 1: <component name>
+### Task 1: <behavioral outcome>
 
 **Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+- Modify: `src/existing.rs`
+- Test: `tests/behavior.rs`
 
-- [ ] **Step 1: Write the failing test**
+**Interfaces:** `parse(input: &str) -> Result<Value, ParseError>`
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
-```
+**Behaviors:**
+- Valid input returns the parsed value.
+- Invalid input reports the byte offset without panicking.
 
-- [ ] **Step 2: Run test to verify it fails**
+**Test intent:** Prove valid parsing, boundary offsets, and malformed-input errors.
 
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
+**Commands:** `cargo test --test behavior`; `cargo test`; `git commit -m "feat: parse values"`
 
-- [ ] **Step 3: Write minimal implementation**
+- [ ] Add the failing behavior tests and verify the expected failure.
+- [ ] Implement the parser behavior and error contract.
+- [ ] Run focused and full verification.
+- [ ] Commit the coherent change.
 
-```python
-def function(input):
-    return expected
-```
+### Review Checkpoint: parsing contract
 
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-
-### Task 2: <next component>
-
-...
-
-### Review Checkpoint: <e.g. data layer — schema + migrations>
-
-### Task 3: <builds on the reviewed foundation>
-
+### Task 2: <next outcome>
 ...
 ```
 
-Tasks are H3 with numbered titles. Steps are GFM checkboxes at column zero (no nested indentation as a step). `### Review Checkpoint: <scope>` markers are H3 too but carry no steps — they tell the executor where to batch its review. The contract is binding — see the `cliban-workflow` skill.
+Tasks use unique numbered H3 headings. Steps are GFM checkboxes at column zero. Checkpoint headings have no task number or steps. This is a binding parser contract shared with `cliban-workflow`.
 
 ## No Placeholders
 
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
+Never leave `TBD`, `TODO`, “implement later,” vague “add error handling,” undefined interfaces, or “similar to Task N.” Be specific about required behavior without prescribing routine code.
 
-## Writing the Plan to Cliban
+## Write and Verify
 
-1. Round-trip the full description (preserving `## Spec` and any `## Activity Log`):
+Round-trip the full description so `## Spec`, `## Activity Log`, and other sections survive:
 
 ```bash
-# Read current description
 cliban issue show <KEY> --json | jq -r '.description' > /tmp/desc.md
-
-# Author the new description, inserting/replacing `## Plan` between `## Spec`
-# and `## Activity Log` (or at end of doc if neither anchor exists).
-# Then write it back:
+# Insert or replace ## Plan in /tmp/desc.md.
 cliban issue edit <KEY> --description-file /tmp/desc.md
+cliban issue show <KEY> --section plan
 ```
 
-2. After writing, verify the plan section parses cleanly:
+## Fresh-Context Plan Review
 
-```bash
-cliban issue show <KEY> --section plan | head -20
-```
+After the plan parses, dispatch a fresh-context verifier using `plan-document-reviewer-prompt.md`. Give it the issue key and repository path, but not the planning conversation. It independently reads the spec and plan from cliban and checks:
 
-If `cliban issue show --section plan` returns exit code 1 ("no ## Plan section"), the plan didn't land — review the description for structural issues and retry.
+1. every spec requirement maps to a task;
+2. interfaces and behavior remain consistent across tasks;
+3. test intent is sufficient to catch wrong behavior;
+4. dependencies and review checkpoints are ordered safely;
+5. no placeholder, scope creep, or needless abstraction remains.
 
-## Self-Review
-
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. Run yourself — not a subagent.
-
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
-
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns above. Fix them.
-
-**3. Type consistency:** Do types, signatures, and property names you used in later tasks match what you defined in earlier tasks? `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
-
-**4. Over-engineering sweep (ponytail):** Final pass of the ponytail lens from the File Structure step across the finished plan — every new abstraction, dependency, or hand-rolled task still earning its place? Favor stdlib / native / existing deps and the shortest task that works before handing off. Implementation-level only; requirements are settled (see above).
-
-If you find issues, fix them inline. Re-write the description if needed.
+Fix blocking findings in the plan and ask the verifier to re-check. Advisory style preferences do not block execution. Fresh context is the point: do not replace this step with same-context self-review.
 
 ## Execution Handoff
 
-After saving the plan, announce briefly and proceed directly to subagent-driven execution — do not prompt for a choice.
+After review, proceed directly:
 
 > **"Plan written to cliban issue `<KEY>`. View with `cliban issue show <KEY> --section plan --pager`. Proceeding with subagent-driven execution."**
 
-- **REQUIRED SUB-SKILL:** Use `alex-skills:subagent-driven-development`
-- Fresh subagent per task + one consolidated review per `### Review Checkpoint`
-
-If the user wants inline execution instead, they will say so — then use `alex-skills:executing-plans`.
+**REQUIRED SUB-SKILL:** Use `alex-skills:subagent-driven-development`. If the user explicitly wants inline execution, use `alex-skills:executing-plans` instead.
 
 ## Anti-Patterns
 
-- **DO NOT** write `docs/superpowers/plans/*.md`. The plan lives in the cliban issue description.
-- **DO NOT** commit the plan as a file in the project repo. The repo stays code-only.
-- **DO NOT** invoke writing-plans on an issue that has no `## Spec` — go back to brainstorming first.
+- Do not commit plans or specs to the project repo.
+- Do not turn a plan into pre-written routine implementation.
+- Do not plan an issue with neither a spec nor enough user-provided behavior to remove material ambiguity.

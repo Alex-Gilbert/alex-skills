@@ -14,7 +14,7 @@ dispatching-parallel-agents · receiving-code-review · requesting-code-review �
 
 ## fork-owned (diverged from upstream — own them)
 
-brainstorming · executing-plans · finishing-a-development-branch · subagent-driven-development · writing-plans · systematic-debugging *(upstream base; carries fork memory hooks)*
+brainstorming · executing-plans · finishing-a-development-branch · subagent-driven-development · writing-plans · systematic-debugging *(upstream base with fork workflow changes)*
 
 ## fork-original (no upstream counterpart)
 

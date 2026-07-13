@@ -1,49 +1,37 @@
-# Plan Document Reviewer Prompt Template
+# Fresh-Context Plan Verifier Prompt
 
-Use this template when dispatching a plan document reviewer subagent.
+Dispatch this prompt after a plan is stored in cliban. Use a fresh subagent that has not seen the planning conversation.
 
-**Purpose:** Verify the plan is complete, matches the spec, and has proper task decomposition.
+```text
+You are the independent verifier for an implementation plan.
 
-**Dispatch after:** The complete plan is written.
+Issue key: [ISSUE_KEY]
+Repository: [REPOSITORY_PATH]
 
+Work from evidence, not the planner's summary:
+
+1. Run `cliban issue show [ISSUE_KEY] --section spec`.
+2. Run `cliban issue show [ISSUE_KEY] --section plan`.
+3. Inspect only the repository files needed to validate the proposed boundaries, interfaces, tests, and commands.
+
+Check whether:
+
+- every spec requirement maps to a task, with no material scope creep;
+- tasks state observable behaviors, edge cases, interfaces, and useful test intent;
+- file paths, dependency order, and verification commands fit the repository;
+- review checkpoints protect foundational work before dependents stack on it;
+- placeholders, contradictions, needless abstractions, or implementation transcripts remain.
+
+Only block on findings that could make the implementer build the wrong thing, get stuck, or miss a meaningful regression. Wording and style preferences are advisory.
+
+Return:
+
+## Plan Review
+**Status:** Approved | Issues Found
+
+**Blocking issues:**
+- [Task or spec section]: [specific problem] — [why it matters]
+
+**Advisory notes:**
+- [optional simplification or clarification]
 ```
-Task tool (general-purpose):
-  description: "Review plan document"
-  prompt: |
-    You are a plan document reviewer. Verify this plan is complete and ready for implementation.
-
-    **Plan to review:** [PLAN_FILE_PATH]
-    **Spec for reference:** [SPEC_FILE_PATH]
-
-    ## What to Check
-
-    | Category | What to Look For |
-    |----------|------------------|
-    | Completeness | TODOs, placeholders, incomplete tasks, missing steps |
-    | Spec Alignment | Plan covers spec requirements, no major scope creep |
-    | Task Decomposition | Tasks have clear boundaries, steps are actionable |
-    | Buildability | Could an engineer follow this plan without getting stuck? |
-
-    ## Calibration
-
-    **Only flag issues that would cause real problems during implementation.**
-    An implementer building the wrong thing or getting stuck is an issue.
-    Minor wording, stylistic preferences, and "nice to have" suggestions are not.
-
-    Approve unless there are serious gaps — missing requirements from the spec,
-    contradictory steps, placeholder content, or tasks so vague they can't be acted on.
-
-    ## Output Format
-
-    ## Plan Review
-
-    **Status:** Approved | Issues Found
-
-    **Issues (if any):**
-    - [Task X, Step Y]: [specific issue] - [why it matters for implementation]
-
-    **Recommendations (advisory, do not block approval):**
-    - [suggestions for improvement]
-```
-
-**Reviewer returns:** Status, Issues (if any), Recommendations
