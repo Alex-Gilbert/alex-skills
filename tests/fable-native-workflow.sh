@@ -70,7 +70,7 @@ assert_contains skills/writing-plans/plan-document-reviewer-prompt.md \
   'Issue key|cliban issue show' \
   'the reviewer prompt must read the cliban-backed spec and plan'
 
-# Cliban is the progressive, lifecycle-free durable memory store.
+# Project Markdown is the progressive, lifecycle-free durable memory store.
 assert_contains skills/cliban-workflow/SKILL.md \
   'cliban --help' \
   'cliban availability must use a supported command'
@@ -78,26 +78,38 @@ assert_not_contains skills/cliban-workflow/SKILL.md \
   'Probe `cliban version`' \
   'cliban availability must not use the unsupported version command'
 assert_contains skills/cliban-workflow/SKILL.md \
-  'cliban note search' \
-  'durable lessons must be retrieved progressively from cliban notes'
+  'cliban project search <KEY>.*--section notes --json' \
+  'durable lessons must be retrieved progressively from project Markdown'
 assert_contains skills/cliban-workflow/SKILL.md \
-  'cliban note --help' \
-  'note memory must capability-check stale cliban installations'
+  'cliban project search --help' \
+  'project memory must capability-check stale cliban installations'
 assert_contains skills/cliban-workflow/SKILL.md \
-  'continuing all project, milestone, and issue workflows normally' \
-  'missing note support must not disable ordinary cliban workflows'
+  'continu(e|ing).*project.*milestone.*issue|project.*milestone.*issue.*normally' \
+  'missing memory search must not disable ordinary cliban workflows'
+assert_contains skills/cliban-workflow/SKILL.md \
+  'one.*`###`|`###`.*one' \
+  'durable lessons must have independently retrievable H3 sections'
 assert_contains skills/cliban-workflow/SKILL.md \
   'durable|reusable' \
   'notes must be reserved for durable lessons'
 assert_contains skills/cliban-workflow/SKILL.md \
-  'search before|before adding' \
-  'notes must be searched before adding to avoid duplicates'
-assert_not_contains skills/brainstorming/SKILL.md \
-  'longer-lived notes|optionally `## Notes`' \
-  'brainstorming must not create a second durable-memory store'
+  'only relevant|only matching|whole.*section|full.*section' \
+  'memory retrieval must not load the full notes section by default'
+assert_contains skills/brainstorming/SKILL.md \
+  'project.*`## Notes`|`## Notes`.*project' \
+  'brainstorming must use project Markdown for durable memory'
+assert_contains skills/brainstorming/SKILL.md \
+  'project edit <KEY> --description "\$\(cat /tmp/project\.md\)"' \
+  'project brainstorming must retain a whole-description fallback for older cliban'
+assert_contains skills/cliban-workflow/SKILL.md \
+  'project show <KEY> --json.*description.*project\.md' \
+  'memory updates must begin by round-tripping the full project description'
+assert_contains skills/cliban-workflow/SKILL.md \
+  'project edit <KEY> --description-file /tmp/project\.md' \
+  'memory updates must preserve the full project description'
 assert_not_contains skills/cliban-workflow/SKILL.md \
-  '\[long-lived notes' \
-  'description-level notes must not compete with cliban notes'
+  'cliban note' \
+  'the superseded first-class note API must be removed'
 
 # Keep the proven engineering and milestone safety rails.
 assert_contains skills/test-driven-development/SKILL.md \

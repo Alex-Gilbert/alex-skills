@@ -11,9 +11,9 @@ workflows that materially help the task. Substantial ambiguous work still follow
 brainstorm → behavioral plan → test-driven execution, while trivial or already
 well-specified changes can proceed directly.
 
-Cliban notes provide progressive durable memory. Agents search project-scoped notes
-for relevant lessons during non-trivial work and record only reusable knowledge;
-notes are never loaded wholesale into every session.
+Project Markdown provides progressive durable memory. Agents fuzzy-search `###`
+subsections under each project's `## Notes`, retrieving only relevant lessons
+rather than loading project memory wholesale into every session.
 
 ## Provenance
 

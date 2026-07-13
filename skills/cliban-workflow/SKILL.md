@@ -28,32 +28,32 @@ Cliban's primitives are:
 - **Sub-issue** — depth-limited to 2. Use `--parent KEY` on `issue add`.
 - **Labels** — free-form per project (auto-created on first use).
 - **Relations** — `blocks`, `blocked_by`, `related_to` (symmetric).
-- **Note** — lifecycle-free durable knowledge scoped to a project; separate from issue status and activity.
+- **Project memory** — lifecycle-free durable knowledge stored as `###` subsections under the project description's `## Notes`.
 
-## Durable Notes — Progressive Memory
+## Project Notes — Progressive Memory
 
-Cliban notes are the exclusive store for reusable lessons that should survive a ticket: repository conventions, non-obvious tool behavior, recurring hazards, and decisions whose rationale will matter again. They are not a second activity log, a status feed, or a dump of the current session.
+The project description's `## Notes` is the store for reusable lessons that should survive a ticket: repository conventions, non-obvious tool behavior, recurring hazards, and decisions whose rationale will matter again. It is not a second activity log, a status feed, or a dump of the current session. Store one independently useful lesson per descriptive `###` subsection.
 
-Probe note support once with `cliban note --help`. If the subcommand is unavailable, skip note search and recording for the session while continuing all project, milestone, and issue workflows normally. Missing note support means the installed CLI predates notes; it is not a database failure and must not disable cliban as a whole.
+Probe memory support once with `cliban project search --help`. If it is unavailable, skip project-memory search and recording for the session while continuing all project, milestone, and issue workflows normally. This means the installed CLI predates progressive project memory; it is not a general cliban failure.
 
-At the start of non-trivial work, derive a few task-specific keywords and search project notes before planning or implementation:
-
-```bash
-cliban note search --project <KEY> "<specific terms>" --json
-cliban note show <NOTE-ID> --json
-```
-
-Read and surface only relevant hits. Do not run an unfiltered note dump, load every result into context, or add an always-loaded memory hook. Use `cliban note ls --project <KEY> --json` only for deliberate inventory work.
-
-Record a note only after discovering a durable, reusable lesson. Search before adding to avoid duplicates:
+At the start of non-trivial work, derive a few task-specific keywords and fuzzy-search project memory before planning or implementation:
 
 ```bash
-cliban note search --project <KEY> "<lesson keywords>" --json
-cliban note add --project <KEY> --title "<concise topic>" --body-file - --json
-cliban note edit <NOTE-ID> --body-file - --json
+cliban project search <KEY> "<specific terms>" --section notes --json
 ```
 
-If an existing note covers the lesson, edit it instead of creating a near-duplicate. Use `cliban note rm <NOTE-ID>` only when knowledge is obsolete rather than merely superseded; prefer editing to preserve the current truth. Command flags may evolve with the CLI, so consult `cliban note add|show|ls|search|edit|rm --help` when needed and keep project scope plus JSON for reads.
+The search requires every whitespace-separated term to fuzzy-match within a subsection and returns only matching `###` blocks, ranked and bounded. Read and surface only relevant hits. Do not load the whole notes section or add an always-loaded memory hook. Use `cliban project show <KEY> --section notes` only for deliberate inventory or editing.
+
+Record memory only after discovering a durable, reusable lesson. Search before updating to avoid duplicate or contradictory subsections. Project descriptions update as a whole, so round-trip the current description and preserve every existing section:
+
+```bash
+cliban project search <KEY> "<lesson keywords>" --section notes --json
+cliban project show <KEY> --json | jq -r '.description' > /tmp/project.md
+# Add or update one `### <concise topic>` under `## Notes` in /tmp/project.md.
+cliban project edit <KEY> --description-file /tmp/project.md
+```
+
+If an existing subsection covers the lesson, update it instead of creating a near-duplicate. Remove obsolete knowledge; when a decision changes, preserve the current truth rather than accumulating a chronology.
 
 ## Status Mapping
 
@@ -124,7 +124,7 @@ Issue (and milestone/project) descriptions follow a strict markdown contract tha
 
 ## Notes
 
-[node-local context tied specifically to this issue, milestone, or project; reusable knowledge belongs in cliban notes]
+[for projects: durable reusable lessons, one per descriptive H3 subsection; for issues and milestones: node-local context]
 ```
 
 Binding conventions:

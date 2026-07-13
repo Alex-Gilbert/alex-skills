@@ -52,17 +52,19 @@ Branch the rest of the conversation on the answer. Infer the scope when context 
 1. Confirm project name/key with user (e.g., `ACME` for the acme-corp service).
 2. If new, create: `cliban project add <KEY> --name "<Name>" --description "<one-line summary>"`.
 3. Run the rest of the brainstorm (questions → approaches → design sections) to draft an architecture-level spec.
-4. After approval, write the `## Spec` to the project description:
+4. After approval, round-trip the project description and replace its `## Spec`, preserving `## Notes` and every other existing section:
 
 ```bash
-cliban project edit <KEY> --description-file - <<'EOF'
-## Spec
-
-<design content with H3 subsections — architecture, vision, constraints>
-EOF
+cliban project show <KEY> --json | jq -r '.description' > /tmp/project.md
+# Insert or replace ## Spec in /tmp/project.md.
+if cliban project edit --help | rg -q -- '--description-file'; then
+  cliban project edit <KEY> --description-file /tmp/project.md
+else
+  cliban project edit <KEY> --description "$(cat /tmp/project.md)"
+fi
 ```
 
-Store any durable, reusable lessons as project-scoped `cliban note` records using the search-before-add convention, not in the project description.
+Store durable, reusable lessons in the project's `## Notes`, one lesson per descriptive `###` subsection. Follow the search-before-update and full-description round-trip convention in cliban-workflow.
 
 5. Offer to create initial milestones under the new project:
 
