@@ -3,7 +3,7 @@
 
 # Verify the fork-owned workflow policy and plugin manifest.
 test:
-    bash tests/fable-native-workflow.sh
+    bash tests/workflow-policy.sh
     claude plugin validate .claude-plugin/plugin.json
     claude plugin validate .claude-plugin/marketplace.json
 

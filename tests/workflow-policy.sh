@@ -124,8 +124,81 @@ assert_contains skills/complete-milestone/SKILL.md \
 assert_git_blob skills/test-driven-development/SKILL.md \
   7a751fa946b7fd801feb504cb1af6b5b62adcf43 \
   'TDD must remain byte-for-byte unchanged'
-assert_git_blob skills/complete-milestone/SKILL.md \
-  a54fbc48ec56e0463505479358805874d19b688c \
-  'complete-milestone must remain byte-for-byte unchanged'
+# Model routing is centralized behind capability roles and defaults to no-Fable.
+test -f skills/model-routing/SKILL.md || fail 'model-routing skill must exist'
+assert_contains skills/OWNERSHIP.md \
+  '\bmodel-routing\b' \
+  'model-routing ownership must be documented'
+assert_contains skills/model-routing/SKILL.md \
+  'ALEX_SKILLS_MODEL_PROFILE' \
+  'model profile must be selectable with one environment variable'
+assert_contains skills/model-routing/SKILL.md \
+  'no-fable.*default|default.*no-fable' \
+  'the default profile must avoid Fable'
+for profile in performance economy inherit; do
+  assert_contains skills/model-routing/SKILL.md \
+    "\\b$profile\\b" \
+    "$profile model profile must be available"
+done
+assert_contains skills/model-routing/SKILL.md \
+  '\| `no-fable` \(default\) \| `opus` \| `opus` \| `sonnet` \| `haiku` \|' \
+  'the no-fable profile must contain no Fable model route'
+assert_contains skills/model-routing/SKILL.md \
+  '\| `performance` \| `fable` \| `fable` \| `sonnet` \| `haiku` \|' \
+  'the performance profile mapping must stay explicit'
+assert_contains skills/model-routing/SKILL.md \
+  '\| `economy` \| `sonnet` \| `sonnet` \| `sonnet` \| `haiku` \|' \
+  'the economy profile must keep every non-mechanical role off premium models'
+assert_contains skills/model-routing/SKILL.md \
+  '\| `inherit` \| inherit \| inherit \| inherit \| inherit \|' \
+  'the provider-neutral profile must inherit every role'
+for role in COORDINATOR REVIEWER IMPLEMENTER MECHANICAL; do
+  assert_contains skills/model-routing/SKILL.md \
+    "ALEX_SKILLS_MODEL_$role" \
+    "$role capability role must support a host-specific override"
+done
+assert_contains skills/model-routing/SKILL.md \
+  'empty|unset' \
+  'empty profile selection must have defined behavior'
+assert_contains skills/model-routing/SKILL.md \
+  'unknown|unrecognized|invalid' \
+  'unknown profile selection must have defined behavior'
+assert_contains skills/model-routing/SKILL.md \
+  'unsupported|unavailable.*override|override.*unavailable' \
+  'unsupported explicit model overrides must be surfaced'
+assert_contains skills/subagent-driven-development/SKILL.md \
+  'same concrete model|same model' \
+  'workflows must allow economy profiles to map distinct roles identically'
+assert_contains README.md \
+  'ALEX_SKILLS_MODEL_PROFILE=no-fable' \
+  'README must document the cheap no-Fable switch'
+for profile in performance economy inherit; do
+  assert_contains README.md \
+    "\\b$profile\\b" \
+    "README must document the $profile model profile"
+done
 
-printf 'fable-native workflow checks passed\n'
+for skill in \
+  complete-milestone improve requesting-code-review requesting-strict-review \
+  subagent-driven-development; do
+  assert_contains "skills/$skill/SKILL.md" \
+    'model-routing' \
+    "$skill must load centralized model routing"
+done
+
+if rg -ni '\b(fable|opus|sonnet|haiku)\b' \
+  skills/complete-milestone/SKILL.md \
+  skills/improve/SKILL.md \
+  skills/improve/references/closing-the-loop.md \
+  skills/requesting-code-review/SKILL.md \
+  skills/requesting-strict-review/SKILL.md \
+  skills/subagent-driven-development/SKILL.md \
+  skills/subagent-driven-development/task-reviewer-prompt.md \
+  agents/code-reviewer.md; then
+  fail 'workflow skills and agent definitions must use roles, not concrete model names'
+fi
+assert_not_contains agents/code-reviewer.md \
+  '^model:' \
+  'the reviewer agent must not hard-pin a provider model'
+
+printf 'workflow policy checks passed\n'

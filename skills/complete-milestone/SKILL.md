@@ -1,7 +1,7 @@
 ---
 name: complete-milestone
 description: "Use when asked to orchestrate, drive, or complete an entire cliban milestone end-to-end — multiple dependency-linked issues each needing their own plan, implementation, and integration."
-requires_skills: [cliban-workflow]
+requires_skills: [cliban-workflow, model-routing]
 ---
 
 # Complete Milestone
@@ -106,7 +106,7 @@ Use the issue's `git_branch_name` as `<ticket-branch>`. Then dispatch **one agen
 
 1. `cd` into its worktree and confirm isolation.
 2. Invoke `alex-skills:writing-plans` for the issue key → fills the issue's `## Plan`.
-3. Invoke `alex-skills:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: it stays on a capable model (`fable` when available, `opus` otherwise — ticket-level planning and multi-task coordination is long-horizon work, fable's strongest documented territory) and fans out **cheap** per-task implementer subagents (reviewers on `fable`/`opus`) — see that skill's Model Selection. This is the intended planner→executor→cheap-implementer tiering, not a thing to flatten.
+3. Invoke `alex-skills:subagent-driven-development` for the same key → executes the plan task-by-task with the consolidated checkpoint review it mandates. The ticket agent is the **capable executor**: dispatch it with the `coordinator` role, then let it fan out `implementer`/`mechanical` task agents and `reviewer` agents per model-routing. Preserve those semantic role requests; the selected profile may legitimately map multiple roles to the same concrete model.
 4. Commit all work on `<ticket-branch>`. **MUST NOT** merge, touch `main`, or touch the milestone branch.
 5. Report back **only after every commit has landed** (commit-then-report; never report with staged-but-uncommitted work, never commit after reporting): final commit SHA, branch name, test status, one-line summary, and merge-risk notes.
 

@@ -7,7 +7,7 @@ Use this when dispatching a reviewer at a `### Review Checkpoint`. One reviewer 
 ```
 Task tool (general-purpose):
   description: "Checkpoint review: <checkpoint scope>"
-  model: fable   # review/bug-finding is fable's strongest documented gain; fall back to opus
+  model: [resolved reviewer role; omit when inheriting]
   prompt: |
     You are reviewing a batch of completed work at a review checkpoint.
 

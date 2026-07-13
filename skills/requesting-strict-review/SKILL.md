@@ -1,6 +1,7 @@
 ---
 name: requesting-strict-review
 description: Use when finishing a large feature branch, auditing a PR, or evaluating a refactor — to dispatch an opinionated maintainability reviewer focused on structural simplification, abstraction quality, and spaghetti detection. Stricter than requesting-code-review and complementary to it.
+requires_skills: [model-routing]
 ---
 
 # Requesting Strict Review
@@ -41,7 +42,7 @@ WORKTREE=$(git rev-parse --show-toplevel)
 - `{HEAD_SHA}` — `$HEAD_SHA`
 - `{SUMMARY}` — one-sentence description of what the branch is for
 
-Dispatch with `model: fable` when available (fall back to `opus`) — judging abstraction quality and spotting structural simplifications is exactly the high-ceiling reasoning fable is strongest at; a cheaper reviewer defeats the point of a *strict* pass.
+Resolve the `reviewer` role through model-routing and pass it when supported. Strict review depends on capable judgment, but the selected provider model and cost profile belong to the central routing policy.
 
 **3. Act on findings.** Strict review is more demanding than normal:
 

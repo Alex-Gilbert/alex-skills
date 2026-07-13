@@ -1,6 +1,7 @@
 ---
 name: requesting-code-review
 description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
+requires_skills: [model-routing]
 ---
 
 # Requesting Code Review
@@ -33,7 +34,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 
 Use Task tool with alex-skills:code-reviewer type, fill template at `code-reviewer.md`
 
-**Model:** the agent definition pins `model: fable` (review and bug-finding are fable's strongest documented gains). Don't override it downward to save tokens — the reviewer is the quality-recovery layer; if fable is unavailable, `opus` is the floor.
+**Model:** resolve the `reviewer` role through model-routing and pass the result when the host supports model selection. The agent definition itself is unpinned so profiles and non-provider hosts remain portable.
 
 **Placeholders:**
 - `{WHAT_WAS_IMPLEMENTED}` - What you just built

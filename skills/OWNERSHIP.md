@@ -10,12 +10,12 @@ Verify with: `grep -c "cliban\|MEMORY_API_URL\|ponytail" skills/<name>/SKILL.md`
 
 ## upstream-tracked (keep pristine)
 
-dispatching-parallel-agents · receiving-code-review · requesting-code-review · test-driven-development · using-git-worktrees · using-superpowers · verification-before-completion · writing-skills
+dispatching-parallel-agents · receiving-code-review · test-driven-development · using-git-worktrees · using-superpowers · verification-before-completion · writing-skills
 
 ## fork-owned (diverged from upstream — own them)
 
-brainstorming · executing-plans · finishing-a-development-branch · subagent-driven-development · writing-plans · systematic-debugging *(upstream base with fork workflow changes)*
+brainstorming · executing-plans · finishing-a-development-branch · requesting-code-review · subagent-driven-development · writing-plans · systematic-debugging *(upstream base with fork workflow changes)*
 
 ## fork-original (no upstream counterpart)
 
-bugs · cliban · cliban-workflow · complete-milestone · improve · ponytail · ponytail-audit · ponytail-debt · ponytail-review · repo-standards · requesting-strict-review · status · ticket
+bugs · cliban · cliban-workflow · complete-milestone · improve · model-routing · ponytail · ponytail-audit · ponytail-debt · ponytail-review · repo-standards · requesting-strict-review · status · ticket

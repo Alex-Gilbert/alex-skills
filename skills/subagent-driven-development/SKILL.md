@@ -1,7 +1,7 @@
 ---
 name: subagent-driven-development
 description: "Use when executing a cliban-stored implementation plan with independent tasks in the current session, dispatching a fresh subagent per task."
-requires_skills: [cliban-workflow]
+requires_skills: [cliban-workflow, model-routing]
 ---
 
 # Subagent-Driven Development
@@ -148,15 +148,15 @@ After cumulative review approves:
 
 ## Model Selection
 
-**Role tiering — keep judgment capable, make only the grind cheap.** You (the executor) coordinate, resolve conflicts, run reviews, and land commits — stay on a capable model. The per-task **implementer** subagents are where cheap models belong; the two **reviewers** (spec + quality) stay capable, since their whole job is catching what a cheap implementer got wrong. Never run the executor or the reviewers on the cheap tier to save tokens — that removes the quality recovery that makes cheap implementers safe.
+**Role tiering — preserve the judgment and execution responsibilities.** You (the executor) coordinate, resolve conflicts, run reviews, and land commits. Per-task implementers do the grind; reviewers independently recover quality. Always request the correct semantic role. A selected profile may intentionally map several roles to the same concrete model; do not reject or override that mapping, and do not substitute the `mechanical` role merely to save tokens.
 
-Concrete tiers (Agent tool `model` parameter; `fable` > `opus` > `sonnet` > `haiku`):
-- **Executor (you):** inherit the session model — don't downgrade yourself.
-- **Checkpoint + final reviewers:** dispatch with `model: fable` when available (fall back to `opus`). Review and bug-finding is where fable shows its largest documented gains, and the reviewer is the quality-recovery layer for cheap implementers.
+Resolve concrete model identifiers through model-routing:
+- **Executor (you):** inherit the session model. Ticket agents spawned by a milestone use `coordinator`.
+- **Checkpoint + final reviewers:** use `reviewer`. This is the quality-recovery layer for cheaper implementers.
 - Per-task **implementer** model, by task shape:
-  - **Mechanical tasks** (isolated functions, clear specs, 1-2 files): `haiku` or `sonnet`
-  - **Integration tasks** (multi-file coordination, debugging): `sonnet`
-  - **Architecture-heavy tasks** (cross-cutting design, gnarly refactors): `fable` (fall back to `opus`)
+  - **Mechanical tasks** (isolated functions, clear specs, 1-2 files): `mechanical`
+  - **Integration tasks** (multi-file coordination, debugging): `implementer`
+  - **Architecture-heavy tasks** (cross-cutting design, gnarly refactors): `coordinator`
 
 ## Prompt Templates
 

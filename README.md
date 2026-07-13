@@ -1,9 +1,10 @@
 # alex-skills
 
-A personal [Claude Code](https://claude.com/claude-code) skills system — agent
-workflows for brainstorming, planning, test-driven development, debugging, code
-review, and release, wired to integrate with [cliban](https://github.com/Alex-Gilbert)
-(a self-hosted kanban/issue CLI) for issue, plan, and milestone tracking.
+A model-agnostic agent skills system, packaged for Claude Code and documented
+for Codex-compatible hosts. It provides workflows for brainstorming, planning,
+test-driven development, debugging, code review, and release, wired to integrate
+with [cliban](https://github.com/Alex-Gilbert) (a self-hosted kanban/issue CLI)
+for issue, plan, and milestone tracking.
 
 Skills are selected by judgment rather than injected as a mandatory session-start
 policy. Explicit skill requests remain binding; otherwise the agent uses only the
@@ -14,6 +15,21 @@ well-specified changes can proceed directly.
 Project Markdown provides progressive durable memory. Agents fuzzy-search `###`
 subsections under each project's `## Notes`, retrieving only relevant lessons
 rather than loading project memory wholesale into every session.
+
+## Model profiles
+
+Workflow skills request capability roles rather than concrete models. The
+central `model-routing` skill maps those roles for `performance`, `no-fable`,
+`economy`, and provider-neutral `inherit` profiles. The default is `no-fable`:
+
+```bash
+export ALEX_SKILLS_MODEL_PROFILE=no-fable
+```
+
+Use `performance` to opt into the expensive top tier, `economy` for a
+Sonnet/Haiku-only workflow, or `inherit` to let Codex or another host select
+every model. Per-role environment overrides accept any model identifier the
+host supports.
 
 ## Provenance
 
